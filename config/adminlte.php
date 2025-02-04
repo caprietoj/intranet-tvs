@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'The Victorias Shool',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -344,12 +344,133 @@ return [
             'icon' => ' fas fa-ticket-alt',
             'can' => 'ticket.view',
         ],
+
         [
-            'text' => 'Solicitudes RRHH',
-            'url' => '',
-            'icon' => 'fas fa-fw fa-file',
+            'text' => 'RRHH',
+            'icon' => 'fas fa-users',
+            'submenu' => [
+                [
+                    'text' => 'Documentos',
+                    'url'  => 'documents',
+                    'icon' => 'fas fa-folder',
+                ],
+                [
+                    'text' => 'Solicitudes',
+                    'url'  => 'document-requests',
+                    'icon' => 'fas fa-paper-plane',
+                ],
+            ],
         ],
         
+        ['header' => 'CONFIGURACIÓN DE KPI´S'],
+        [
+            'text'    => "KPI'S TVS",
+            'icon'    => 'fas fa-chart-line',
+            'submenu' => [
+                [
+                    'text'    => 'Enfermería',
+                    'submenu' => [
+                        [
+                            'text' => 'Crear KPI',
+                            'url'  => 'enfermeria/kpis/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver KPI',
+                            'url'  => 'enfermeria/kpis',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Configurar Umbral',
+                            'url'  => 'enfermeria/umbral/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Umbrales Configurados',
+                            'url'  => 'enfermeria/umbral/show',
+                            'icon' => '',
+                        ],
+                    ],
+                ],
+                [
+                    'text'    => 'Compras',
+                    'submenu' => [
+                        [
+                            'text' => 'Crear KPI',
+                            'url'  => 'compras/kpis/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver KPI',
+                            'url'  => 'compras/kpis',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Configuración del Umbral',
+                            'url'  => 'compras/umbral/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver Umbral',
+                            'url'  => 'compras/umbral/show',
+                            'icon' => '',
+                        ],
+                    ],
+                ],
+                [
+                    'text'    => 'Recursos Humanos',
+                    'submenu' => [
+                        [
+                            'text' => 'Crear KPI',
+                            'url'  => 'rrhh/kpis/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver KPI',
+                            'url'  => 'rrhh/kpis',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Crear Umbral',
+                            'url'  => 'rrhh/umbral/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver Umbral',
+                            'url'  => 'rrhh/umbral/show',
+                            'icon' => '',
+                        ],
+                    ],
+                ],
+                [
+                    'text'    => 'Sistemas',
+                    'submenu' => [
+                        [
+                            'text' => 'Crear KPI',
+                            'url'  => 'sistemas/kpis/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver KPI',
+                            'url'  => 'sistemas/kpis',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Crear Umbral',
+                            'url'  => 'sistemas/umbral/create',
+                            'icon' => '',
+                        ],
+                        [
+                            'text' => 'Ver Umbral',
+                            'url'  => 'sistemas/umbral/index',
+                            'icon' => '',
+                        ],
+
+                    ],
+
+                ],
+            ],
+        ],
     ],
 
     /*
