@@ -16,12 +16,31 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permisos existentes para el manejo de tickets
-        $ticketPermissions = [
+        $ticketPermissions = 
+        [
+            'view.dashboard',
             'ticket.view',
-            'ticket.create',
-            'ticket.edit',
-            'ticket.delete',
+            'documents',
+            'document-requests',
+            'kpis.enfermeria.create',
+            'kpis.enfermeria.index',
+            'umbral.enfermeria.create',
+            'umbral.enfermeria.show',
+            'kpis.compras.create',
+            'kpis.compras.index',
+            'umbral.compras.create',
+            'umbral.compras.show',
+            'kpis.recursoshumanos.create',
+            'kpis.recursoshumanos.index',
+            'umbral.recursoshumanos.create',
+            'umbral.recursoshumanos.show',
+            'kpis.sistemas.create',
+            'kpis.sistemas.index',
+            'umbral.sistemas.create',
+            'umbral.sistemas.index',
         ];
+       
+  
 
         foreach ($ticketPermissions as $perm) {
             Permission::firstOrCreate(['name' => $perm]);

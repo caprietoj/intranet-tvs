@@ -7,6 +7,8 @@ use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TicketCreated;
 
 class TicketController extends Controller
 {
@@ -17,13 +19,18 @@ class TicketController extends Controller
     // Mostrar listado (para DataTables)
     public function index(Request $request)
     {
+        // Filter tickets: Admin sees all; others see only their own tickets.
+        if (auth()->user()->role === 'admin') {
+            $tickets = Ticket::all();
+        } else {
+            $tickets = Ticket::where('user_id', auth()->id())->get();
+        }
+
         // Si la petición es AJAX, se envían los datos en JSON
         if ($request->ajax()) {
-            $tickets = Ticket::with('user')->get();
             return response()->json(['data' => $tickets]);
         }
         // Para la vista, se pueden enviar también los tickets
-        $tickets = Ticket::with('user')->get();
         return view('tickets.index', compact('tickets'));
     }
 
@@ -57,6 +64,11 @@ public function store(Request $request)
         'tipo_requerimiento' => $request->tipo_requerimiento,
         'user_id'            => Auth::id(),
     ]);
+
+    // Send email notification to the user and CC a copy
+    Mail::to($ticket->user->email)
+        ->cc('caprietoj@gmail.com')
+        ->send(new TicketCreated($ticket));
 
     return response()->json(['message' => 'Ticket creado exitosamente', 'ticket' => $ticket], 201);
     }
