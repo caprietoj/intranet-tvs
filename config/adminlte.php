@@ -490,6 +490,11 @@ return [
             'url'  => 'admin/roles',
             'icon' => 'fas fa-user-shield',
         ],
+        [
+            'text' => 'Usuarios',
+            'url'  => 'admin/users',
+            'icon' => 'fas fa-users',
+        ],
     ],
 
     /*
