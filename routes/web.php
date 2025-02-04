@@ -23,7 +23,7 @@ use App\Http\Controllers\SistemasThresholdController;
 // Documentos
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentRequestController;
-
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -131,6 +131,8 @@ Route::middleware('auth')->group(function () {
                 'update'  => 'roles.update',
                 'destroy' => 'roles.destroy',
             ]);
+
+            Route::resource('users', UserController::class);
         });
 });
 
