@@ -118,6 +118,20 @@ Route::middleware('auth')->group(function () {
         // ruta para documentos y documentos request
         Route::resource('documents', DocumentController::class);
         Route::resource('document-requests', DocumentRequestController::class);
+
+        // Group admin routes together
+        Route::prefix('admin')->group(function () {
+            Route::get('/settings', [App\Http\Controllers\AdminSettingsController::class, 'index'])->name('admin.settings');
+
+            Route::resource('roles', App\Http\Controllers\RolesController::class)->names([
+                'index'   => 'roles.index',
+                'create'  => 'roles.create',
+                'store'   => 'roles.store',
+                'edit'    => 'roles.edit',
+                'update'  => 'roles.update',
+                'destroy' => 'roles.destroy',
+            ]);
+        });
 });
 
 require __DIR__.'/auth.php';
