@@ -1,4 +1,3 @@
-{{-- resources/views/tickets/create.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Crear Ticket')
@@ -12,7 +11,7 @@
     <div class="card-body">
         <form id="createTicketForm">
             @csrf
-            {{-- Input de usuario (mostrar primero) --}}
+            <!-- Mostrar el usuario creador (readonly) -->
             <div class="form-group">
                 <label>Usuario</label>
                 <input type="text" value="{{ auth()->user()->name }}" class="form-control" readonly>
@@ -25,7 +24,7 @@
                 <label for="descripcion">Descripción</label>
                 <textarea name="descripcion" id="descripcion" class="form-control" required></textarea>
             </div>
-            {{-- Tipo de requerimiento antes de prioridad --}}
+            <!-- Tipo de requerimiento -->
             <div class="form-group">
                 <label for="tipo_requerimiento">Tipo de Requerimiento</label>
                 <select name="tipo_requerimiento" id="tipo_requerimiento" class="form-control" required>
@@ -36,6 +35,7 @@
                     <option value="Conectividad">Conectividad</option>
                 </select>
             </div>
+            <!-- Prioridad -->
             <div class="form-group">
                 <label for="prioridad">Prioridad</label>
                 <select name="prioridad" id="prioridad" class="form-control" required>

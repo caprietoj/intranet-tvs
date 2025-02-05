@@ -1,120 +1,131 @@
 <?php
 
-// app/Http/Controllers/TicketController.php
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TicketCreated;
 
 class TicketController extends Controller
 {
-    public function __construct() {
-        $this->middleware('auth');
-    }
-
-    // Mostrar listado (para DataTables)
+    /**
+     * Muestra el listado de tickets.
+     */
     public function index(Request $request)
     {
-        // Filter tickets: Admin sees all; others see only their own tickets.
-        if (auth()->user()->role === 'admin') {
-            $tickets = Ticket::all();
+        // Los administradores ven todos los tickets; los demás solo sus tickets.
+        if (auth()->user()->hasRole('admin')) {
+            $tickets = Ticket::with('user', 'tecnico')->get();
         } else {
-            $tickets = Ticket::where('user_id', auth()->id())->get();
+            $tickets = Ticket::with('user', 'tecnico')
+                ->where('user_id', auth()->id())
+                ->get();
         }
 
-        // Si la petición es AJAX, se envían los datos en JSON
         if ($request->ajax()) {
             return response()->json(['data' => $tickets]);
         }
-        // Para la vista, se pueden enviar también los tickets
+
         return view('tickets.index', compact('tickets'));
     }
 
-    // Formulario para crear un nuevo ticket
+    /**
+     * Muestra el formulario para crear un ticket.
+     * En esta acción NO se asigna técnico.
+     */
     public function create()
     {
         return view('tickets.create');
     }
 
-    // Guardar un nuevo ticket (con validaciones y usuario autenticado)
+    /**
+     * Almacena un nuevo ticket.
+     * Se omite la asignación de técnico en este proceso.
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'titulo'             => 'required|string|max:255',
+            'descripcion'        => 'required|string',
+            'tipo_requerimiento' => 'required|string|in:Hardware,Software,Mantenimiento,Instalación,Conectividad',
+            'prioridad'          => 'required|string|in:Baja,Media,Alta',
+        ]);
 
-public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'titulo'             => 'required|max:255',
-        'descripcion'        => 'required',
-        // Se elimina la validación del campo 'estado'
-        'prioridad'          => 'required|in:Baja,Media,Alta',
-        'tipo_requerimiento' => 'required|in:Hardware,Software,Mantenimiento,Instalación,Conectividad'
-    ]);
+        $data['estado']  = 'Abierto';
+        $data['user_id'] = auth()->id();
+        // No se asigna técnico en la creación
+        $ticket = Ticket::create($data);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+        return response()->json([
+            'message' => 'Ticket creado exitosamente',
+            'ticket'  => $ticket
+        ], 201);
     }
 
-    $ticket = Ticket::create([
-        'titulo'             => $request->titulo,
-        'descripcion'        => $request->descripcion,
-        'estado'             => 'Abierto', // Valor por defecto al crear el ticket
-        'prioridad'          => $request->prioridad,
-        'tipo_requerimiento' => $request->tipo_requerimiento,
-        'user_id'            => Auth::id(),
-    ]);
-
-    // Send email notification to the user and CC a copy
-    Mail::to($ticket->user->email)
-        ->cc('caprietoj@gmail.com')
-        ->send(new TicketCreated($ticket));
-
-    return response()->json(['message' => 'Ticket creado exitosamente', 'ticket' => $ticket], 201);
-    }
-
-
-    // Mostrar detalles de un ticket
+    /**
+     * Muestra el detalle de un ticket.
+     */
     public function show($id)
     {
-        $ticket = Ticket::with('user')->findOrFail($id);
+        $ticket = Ticket::with('user', 'tecnico')->findOrFail($id);
         return view('tickets.show', compact('ticket'));
     }
 
-    // Formulario para editar un ticket
+    /**
+     * Muestra el formulario para editar un ticket.
+     * Aquí se permite asignar el técnico.
+     */
     public function edit($id)
     {
         $ticket = Ticket::findOrFail($id);
-        return view('tickets.edit', compact('ticket'));
+        // Se consultan los usuarios cuyo cargo sea "Tecnico" o "Auxiliar"
+        $tecnicos = User::whereIn('cargo', ['Tecnico', 'Auxiliar'])->get();
+        return view('tickets.edit', compact('ticket', 'tecnicos'));
     }
 
-    // Actualizar un ticket (retorna JSON para manejo con AJAX)
+    /**
+     * Actualiza un ticket existente.
+     * Permite asignar (o cambiar) el técnico al ticket.
+     */
     public function update(Request $request, $id)
     {
-        $ticket = Ticket::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'titulo'             => 'required|max:255',
-            'descripcion'        => 'required',
+        $data = $request->validate([
+            'titulo'             => 'required|string|max:255',
+            'descripcion'        => 'required|string',
             'estado'             => 'required|in:Abierto,En Proceso,Cerrado',
-            'prioridad'          => 'required|in:Baja,Media,Alta',
-            'tipo_requerimiento' => 'required|in:Hardware,Software,Mantenimiento,Instalación,Conectividad'
+            'prioridad'          => 'required|string|in:Baja,Media,Alta',
+            'tipo_requerimiento' => 'required|string|in:Hardware,Software,Mantenimiento,Instalación,Conectividad',
+            'tecnico_id'         => 'nullable|exists:users,id',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if (!empty($data['tecnico_id'])) {
+            $tecnico = User::find($data['tecnico_id']);
+            if (!in_array($tecnico->cargo, ['Tecnico', 'Auxiliar'])) {
+                return response()->json([
+                    'errors' => ['tecnico_id' => ['El usuario seleccionado no es un técnico o auxiliar válido.']]
+                ], 422);
+            }
         }
 
-        $ticket->update($request->only('titulo', 'descripcion', 'estado', 'prioridad', 'tipo_requerimiento'));
+        $ticket = Ticket::findOrFail($id);
+        $ticket->update($data);
 
-        return response()->json(['message' => 'Ticket actualizado exitosamente', 'ticket' => $ticket], 200);
+        return response()->json([
+            'message' => 'Ticket actualizado exitosamente',
+            'ticket'  => $ticket
+        ], 200);
     }
 
-    // Eliminar un ticket (con respuesta JSON para AJAX)
+    /**
+     * Elimina un ticket.
+     */
     public function destroy($id)
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->delete();
-        return response()->json(['message' => 'Ticket eliminado exitosamente'], 200);
+
+        return response()->json([
+            'message' => 'Ticket eliminado exitosamente'
+        ], 200);
     }
 }

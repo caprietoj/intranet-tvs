@@ -1,4 +1,3 @@
-{{-- resources/views/tickets/edit.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Editar Ticket')
@@ -13,6 +12,10 @@
         <form id="editTicketForm">
             @csrf
             @method('PUT')
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" value="{{ auth()->user()->name }}" class="form-control" readonly>
+            </div>
             <div class="form-group">
                 <label for="titulo">Título</label>
                 <input type="text" name="titulo" id="titulo" class="form-control" value="{{ $ticket->titulo }}" required>
@@ -47,9 +50,15 @@
                     <option value="Conectividad" {{ $ticket->tipo_requerimiento == 'Conectividad' ? 'selected' : '' }}>Conectividad</option>
                 </select>
             </div>
+            <!-- Nueva sección para asignar técnico al editar -->
             <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" value="{{ auth()->user()->name }}" class="form-control" readonly>
+                <label for="tecnico_id">Técnico Asignado</label>
+                <select name="tecnico_id" id="tecnico_id" class="form-control">
+                    <option value="">Sin asignar</option>
+                    @foreach($tecnicos as $tecnico)
+                        <option value="{{ $tecnico->id }}" {{ $ticket->tecnico_id == $tecnico->id ? 'selected' : '' }}>{{ $tecnico->name }}</option>
+                    @endforeach
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Actualizar Ticket</button>
         </form>

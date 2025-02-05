@@ -20,6 +20,9 @@ class RolesAndPermissionsSeeder extends Seeder
         [
             'view.dashboard',
             'ticket.view',
+            'ticket.edit',
+            'ticket.delete',
+            'ticket.show',
             'documents',
             'document-requests',
             'kpis.enfermeria.create',
@@ -38,6 +41,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'kpis.sistemas.index',
             'umbral.sistemas.create',
             'umbral.sistemas.index',
+            'view.roles',
+            'view.users',
+
         ];
        
   
@@ -55,10 +61,10 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Usuario administrador
         $adminUser = User::firstOrCreate(
-            ['email' => 'jefesistemas@tvs.edu.co'],
+            ['email' => env('ADMIN_EMAIL')],
             [
-                'name' => 'Jefe de Sistemas',
-                'password' => Hash::make('Cr1st1an2024*'),
+                'name' => env('ADMIN_NAME'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
             ]
         );
         if (!$adminUser->hasRole('admin')) {
@@ -70,6 +76,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $usuarioRole->syncPermissions([
             Permission::firstOrCreate(['name' => 'view.dashboard']),
             Permission::firstOrCreate(['name' => 'ticket.view']),
+            Permission::firstOrCreate(['name' => 'document-requests']),
         ]);
     }
 }

@@ -489,11 +489,13 @@ return [
             'text' => 'Roles y Permisos',
             'url'  => 'admin/roles',
             'icon' => 'fas fa-user-shield',
+            'can' => 'view.roles',
         ],
         [
             'text' => 'Usuarios',
             'url'  => 'admin/users',
             'icon' => 'fas fa-users',
+            'can' => 'view.users',
         ],
     ],
 

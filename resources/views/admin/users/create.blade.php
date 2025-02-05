@@ -16,6 +16,19 @@
                 <input type="text" name="name" class="form-control" required>
             </div>
             <div class="form-group">
+                <label for="cargo">Cargo</label>
+                <select name="cargo" id="cargo" class="form-control" required>
+                    <option value="Profesor">Profesor</option>
+                    <option value="Asistente">Asistente</option>
+                    <option value="Tecnico">Tecnico</option>
+                    <option value="Administrativo">Administrativo</option>
+                    <option value="Auxiliar">Auxiliar</option>
+                    <option value="Aprendiz">Aprendiz</option>
+                    <option value="Rectora">Rectora</option>
+                    <option value="Sub Rectora">Sub Rectora</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Email</label>
                 <input type="email" name="email" class="form-control" required>
             </div>
@@ -28,10 +41,10 @@
                 <input type="password" name="password_confirmation" class="form-control" required>
             </div>
             <div class="form-group">
-                <label>Roles</label>
-                <select name="roles[]" class="form-control" multiple required>
+                <label>Rol</label>
+                <select name="role" class="form-control" required>
                     @foreach($roles as $role)
-                    <option value="{{ $role }}">{{ $role }}</option>
+                        <option value="{{ $role }}">{{ $role }}</option>
                     @endforeach
                 </select>
             </div>
@@ -43,7 +56,7 @@
 
 @section('js')
     <script>
-        // Optional: Initialize Select2 for roles select
-        $('select[name="roles[]"]').select2();
+        // Inicializa Select2 si lo deseas
+        $('select[name="role"]').select2();
     </script>
 @stop

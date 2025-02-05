@@ -1,4 +1,3 @@
-{{-- resources/views/tickets/index.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Listado de Tickets')
@@ -22,12 +21,13 @@
                     <th>Prioridad</th>
                     <th>Tipo de Requerimiento</th>
                     <th>Usuario</th>
+                    <th>Técnico</th>
                     <th>Fecha de Creación</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($tickets as $ticket)
+            @foreach($tickets as $ticket)
                 <tr>
                     <td>{{ $ticket->id }}</td>
                     <td>{{ $ticket->titulo }}</td>
@@ -51,14 +51,23 @@
                     </td>
                     <td>{{ $ticket->tipo_requerimiento }}</td>
                     <td>{{ $ticket->user->name }}</td>
+                    <td>
+                        {{ $ticket->tecnico ? $ticket->tecnico->name : 'Sin asignar' }}
+                    </td>
                     <td>{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                     <td>
-                        <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-sm btn-info">Ver</a>
-                        <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-primary">Editar</a>
-                        <button data-id="{{ $ticket->id }}" class="btn btn-sm btn-danger delete-ticket">Eliminar</button>
+                        @can('ticket.show')
+                            <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-sm btn-info">Ver</a>
+                        @endcan
+                        @can('ticket.edit')
+                            <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-sm btn-primary">Editar</a>
+                        @endcan
+                        @can('ticket.delete')
+                            <button data-id="{{ $ticket->id }}" class="btn btn-sm btn-danger delete-ticket">Eliminar</button>
+                        @endcan
                     </td>
                 </tr>
-                @endforeach
+            @endforeach
             </tbody>
         </table>
     </div>
