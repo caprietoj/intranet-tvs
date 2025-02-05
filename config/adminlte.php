@@ -486,6 +486,11 @@ return [
             ],
         ],
         [
+            'text' => 'Informe de KPIs',
+            'url'  => 'admin/kpis/report',
+            'icon' => 'fa fa-chart-line',
+        ],
+        [
             'text' => 'Roles y Permisos',
             'url'  => 'admin/roles',
             'icon' => 'fas fa-user-shield',

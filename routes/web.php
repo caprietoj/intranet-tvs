@@ -25,11 +25,12 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\UserController;
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+// Reportes
+use App\Http\Controllers\KPIReportController;
 
-Route::get('/register', function () {
+
+
+Route::get('/', function () {
     return redirect('/login');
 });
 
@@ -50,13 +51,23 @@ Route::middleware('auth')->group(function () {
         Route::get('kpis/{id}/edit', [KpiController::class, 'editEnfermeria'])->name('kpis.enfermeria.edit');
         Route::put('kpis/{id}', [KpiController::class, 'updateEnfermeria'])->name('kpis.enfermeria.update');
         Route::get('kpis/{id}', [KpiController::class, 'showEnfermeria'])->name('kpis.enfermeria.show');
+        Route::delete('kpis/{id}', [KpiController::class, 'destroyEnfermeria'])->name('kpis.enfermeria.destroy');
     
         // Rutas para la Configuración del Umbral en Enfermería
-        Route::get('umbral/create', [ThresholdController::class, 'createEnfermeria'])->name('umbral.enfermeria.create');
-        Route::post('umbral', [ThresholdController::class, 'storeEnfermeria'])->name('umbral.enfermeria.store');
-        Route::get('umbral/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
-        Route::put('umbral', [ThresholdController::class, 'updateEnfermeria'])->name('umbral.enfermeria.update');
+        Route::get('umbral', [ThresholdController::class, 'indexEnfermeria'])->name('umbral.enfermeria.index');
+        Route::post('umbral', [ThresholdController::class, 'updateEnfermeria'])->name('umbral.enfermeria.update');
+        
+        // (Opcional) Ruta para visualizar el threshold en modo "show"
         Route::get('umbral/show', [ThresholdController::class, 'showEnfermeria'])->name('umbral.enfermeria.show');
+        
+        // Nueva ruta para crear umbral en Enfermería
+        Route::get('umbral/create', [ThresholdController::class, 'createEnfermeria'])->name('umbral.enfermeria.create');
+        
+        // Nueva ruta agregada para almacenar el umbral en Enfermería.
+        Route::post('umbral/store', [ThresholdController::class, 'storeEnfermeria'])->name('umbral.enfermeria.store');
+
+        // Nueva ruta para editar el umbral en Enfermería.
+        Route::get('umbral/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
     });
 
     Route::prefix('compras')->group(function () {
@@ -138,6 +149,14 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('users', UserController::class);
         });
+
+        // Rutas para el reporte de KPIs
+        Route::group(['prefix' => 'admin'], function () {
+        Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
+            // También las rutas para PDF y HTML, si las necesitas:
+        //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
+        //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
+        });
 });
 
 require __DIR__.'/auth.php';
@@ -145,3 +164,7 @@ require __DIR__.'/auth.php';
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+
