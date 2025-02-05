@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TicketCreated;
 
 class Ticket extends Model
 {
@@ -18,6 +20,18 @@ class Ticket extends Model
         'user_id',
         'tecnico_id'
     ];
+
+    protected static function booted()
+    {
+        static::created(function($ticket) {
+            // Send email to sistemas address.
+            Mail::to('sistemas@tvs.edu.co')->send(new TicketCreated($ticket));
+            // Send email to the creator user if email provided.
+            if ($ticket->user && $ticket->user->email) {
+                Mail::to($ticket->user->email)->send(new TicketCreated($ticket));
+            }
+        });
+    }
 
     // Relación con el usuario que creó el ticket
     public function user()

@@ -9,7 +9,14 @@ class DocumentRequestController extends Controller
 {
     public function index()
     {
-        $requests = DocumentRequest::with(['user', 'document'])->latest()->paginate(10);
+        if (auth()->user()->hasRole('admin')) {
+            $requests = DocumentRequest::with(['user', 'document'])->latest()->paginate(10);
+        } else {
+            $requests = DocumentRequest::with(['user', 'document'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->paginate(10);
+        }
         return view('document-requests.index', compact('requests'));
     }
 

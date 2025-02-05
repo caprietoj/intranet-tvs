@@ -20,7 +20,7 @@ class TicketCreated extends Mailable
 
     public function build()
     {
-        return $this->subject('Ticket creado: ' . $this->ticket->title)
+        return $this->subject('Ticket Creado')
                     ->view('emails.ticket_created');
     }
 }
