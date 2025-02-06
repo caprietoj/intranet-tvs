@@ -34,6 +34,7 @@
                     <option value="Diario" {{ $kpi->frequency=='Diario'?'selected':'' }}>Diario</option>
                     <option value="Quincenal" {{ $kpi->frequency=='Quincenal'?'selected':'' }}>Quincenal</option>
                     <option value="Mensual" {{ $kpi->frequency=='Mensual'?'selected':'' }}>Mensual</option>
+                    <option value="Semestral" {{ $kpi->frequency=='Semestral'?'selected':'' }}>Semestral</option>
                 </select>
             </div>
             <div class="form-group">

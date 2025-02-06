@@ -35,6 +35,7 @@
                     <option value="Diario">Diario</option>
                     <option value="Quincenal">Quincenal</option>
                     <option value="Mensual">Mensual</option>
+                    <option value="Semestral">Semestral</option>
                 </select>
             </div>
             <div class="form-group">
