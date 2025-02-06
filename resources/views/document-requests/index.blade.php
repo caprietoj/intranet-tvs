@@ -19,6 +19,7 @@
                         <th>Usuario</th>
                         <th>Documento</th>
                         <th>Estado</th>
+                        <th>Adjunto</th> <!-- New column -->
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -30,10 +31,26 @@
                             <td>{{ $request->document->name }}</td>
                             <td>
                               <span class="badge 
-                            @if($request->status == 'abierto') badge-info 
-                            @elseif($request->status == 'en proceso') badge-warning 
-                            @else badge-success 
-                            @endif">{{ $request->status }}</span>
+                                @if($request->status == 'abierto') badge-info 
+                                @elseif($request->status == 'en proceso') badge-warning 
+                                @else badge-success 
+                                @endif">{{ $request->status }}</span>
+                            </td>
+                                    <td>
+                                    @php
+            // Buscar el archivo del certificado basado en el naming convention
+            $files = Storage::disk('public')->files('certificates');
+            $pattern = $request->id . '-' . \Str::slug($request->user->name) . '-';
+            $certificateFile = collect($files)->first(function($file) use ($pattern) {
+                return strpos(basename($file), $pattern) === 0;
+            });
+        @endphp
+
+        @if($certificateFile)
+            <a href="{{ asset('storage/' . $certificateFile) }}" target="_blank">Ver Certificado</a>
+        @else
+            N/A
+        @endif
                             </td>
                             <td>
                                 <a href="{{ route('document-requests.edit', $request) }}" class="btn btn-sm btn-info">Editar</a>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\DocumentRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DocumentRequestController extends Controller
 {
@@ -49,10 +50,28 @@ class DocumentRequestController extends Controller
         $request->validate([
             'document_id' => 'required|exists:documents,id',
             'description' => 'required|string',
-            'status' => 'required|in:abierto,en proceso,cerrado'
+            'status'      => 'required|in:abierto,en proceso,cerrado',
+            'certificate' => 'nullable|file|mimes:pdf,jpg,docx'
         ]);
 
-        $documentRequest->update($request->all());
+        $data = $request->all();
+        // Remove certificate from $data to avoid saving it in DB
+        unset($data['certificate']);
+
+        if ($request->hasFile('certificate')) {
+            $certificateFile = $request->file('certificate');
+            $originalName = $certificateFile->getClientOriginalName();
+            // New name: documentRequestID-userSlug-originalFilename.extension
+            $customName = $documentRequest->id . '-' . Str::slug($documentRequest->user->name) . '-' .
+                          pathinfo($originalName, PATHINFO_FILENAME) . '.' . $certificateFile->getClientOriginalExtension();
+            $path = $certificateFile->storeAs('certificates', $customName, 'public');
+            
+            // Send email to user with the attachment using custom file name
+            \Mail::to($documentRequest->user->email)
+                ->send(new \App\Mail\DocumentResolved($documentRequest, $path));
+        }
+
+        $documentRequest->update($data);
         return redirect()->route('document-requests.index')->with('success', 'Solicitud actualizada exitosamente');
     }
 }

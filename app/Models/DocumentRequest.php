@@ -7,7 +7,7 @@ use App\Mail\DocumentRequestCreated;
 
 class DocumentRequest extends Model
 {
-    protected $fillable = ['user_id', 'document_id', 'description', 'status'];
+    protected $fillable = ['user_id', 'document_id', 'description', 'status', 'certificate'];
 
     protected static function booted()
     {
