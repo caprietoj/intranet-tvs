@@ -117,7 +117,7 @@ class KpiController extends Controller
         $validator = Validator::make($request->all(), [
             'threshold_id'     => 'required|exists:thresholds,id',
             'methodology'      => 'required|string',
-            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual,Semestral',
+            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual',
             'measurement_date' => 'required|date',
             'percentage'       => 'required|numeric|min:0|max:100',
         ]);
@@ -167,7 +167,7 @@ class KpiController extends Controller
         $validator = Validator::make($request->all(), [
             'threshold_id'     => 'required|exists:thresholds,id',
             'methodology'      => 'required|string',
-            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual,Semestral',
+            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual',
             'measurement_date' => 'required|date',
             'percentage'       => 'required|numeric|min:0|max:100',
         ]);
