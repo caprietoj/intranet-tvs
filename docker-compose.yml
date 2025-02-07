@@ -20,19 +20,54 @@ services:
   app:
     build: .
     container_name: intranet-tvs-app
+    restart: unless-stopped
     depends_on:
       - db
     environment:
-      # Usa "db" como host para conectarse a la base de datos
+      # Configuración de la base de datos
       DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: ${MYSQL_DATABASE}
       DB_USERNAME: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
+      
+      # Configuración del correo
+      MAIL_MAILER: ${MAIL_MAILER}
+      MAIL_SCHEME: ${MAIL_SCHEME}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM_ADDRESS: "hello@example.com"
+      MAIL_FROM_NAME: ${APP_NAME}
+      
+      # Configuración para la creación del usuario del Sistema
+      ADMIN_NAME: ${ADMIN_NAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     ports:
-      - ":8000"
+      - "8000:8000"
+    volumes:
+      - ./:/var/www
+    networks:
+      - default
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: intranet-tvs-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
     networks:
       - default
 
 volumes:
   db_data:
+
+networks:
+  default:
