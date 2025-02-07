@@ -9,7 +9,11 @@ RUN apt-get update && apt-get install -y \
   unzip \
   curl \
   libonig-dev \
+  netcat-openbsd \
   && rm -rf /var/lib/apt/lists/*
+
+# Instalar la extensión PDO MySQL necesaria para conectar con MySQL
+RUN docker-php-ext-install pdo pdo_mysql
 
 # Instalar Composer (copiado desde la imagen oficial de Composer)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
