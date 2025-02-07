@@ -5,33 +5,33 @@ WORKDIR /var/www
 
 # Instalar dependencias del sistema necesarias
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    curl \
-    libonig-dev \
-    && rm -rf /var/lib/apt/lists/*
+  git \
+  unzip \
+  curl \
+  libonig-dev \
+  && rm -rf /var/lib/apt/lists/*
 
-# Instalar Composer copiándolo desde la imagen oficial de Composer
+# Instalar Composer (copiado desde la imagen oficial de Composer)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Instalar Node.js (utilizando el repositorio de NodeSource para Node.js 18)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y nodejs \
+  && rm -rf /var/lib/apt/lists/*
 
-# Copiar los archivos para el cache de dependencias (opcional)
+# Copiar los archivos de Composer para cachear dependencias (opcional)
 COPY composer.json composer.lock /var/www/
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
 
-# Copiar el resto de la aplicación
+# Copiar el resto de la aplicación, incluyendo .env.example
 COPY . /var/www
 
 # Copiar el entrypoint a una ubicación fuera del volumen montado
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Exponer el puerto en el que se ejecutará la aplicación
+# Exponer el puerto 8000 para la aplicación
 EXPOSE 8000
 
-# Definir el entrypoint
+# Comando de inicio
 CMD ["/usr/local/bin/entrypoint.sh"]
