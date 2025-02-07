@@ -19,21 +19,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# (Opcional) Copiar composer.json y composer.lock para cachear dependencias;
-# sin embargo, dado que el volumen montado del host sobrescribe el contenido,
-# el entrypoint se encargará de ejecutar composer install si es necesario.
-COPY composer.json composer.lock ./
+# Copiar los archivos para el cache de dependencias (opcional)
+COPY composer.json composer.lock /var/www/
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
 
 # Copiar el resto de la aplicación
-COPY . .
+COPY . /var/www
 
-# Copiar el script de entrypoint y asignarle permisos de ejecución
-COPY entrypoint.sh /var/www/entrypoint.sh
-RUN chmod +x /var/www/entrypoint.sh
+# Copiar el entrypoint a una ubicación fuera del volumen montado
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 8000
 
 # Definir el entrypoint
-CMD ["/var/www/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
