@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Si no existe el directorio vendor, ejecutar composer install
+if [ ! -d vendor ]; then
+    echo "No se encontró el directorio vendor. Ejecutando composer install..."
+    composer install --no-interaction --prefer-dist --optimize-autoloader
+fi
+
 echo "Ejecutando npm install..."
 npm install
 
