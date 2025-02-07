@@ -1,42 +1,39 @@
-FROM php:8.4-fpm
+FROM php:8.4-cli
 
-# Instalar dependencias del sistema y utilidades
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zip \
-    git \
-    unzip \
-    curl
-
-# Instalar Node.js (en este ejemplo, se usa la versión 18.x)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
-
-# Configurar la extensión GD para PHP
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install pdo pdo_mysql gd
-
-# Instalar Composer globalmente desde la imagen oficial de Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
+# Establecer el directorio de trabajo
 WORKDIR /var/www
 
-# Copiar archivos de Composer y instalar dependencias PHP
-COPY composer.json composer.lock ./
-RUN composer install --no-scripts --no-autoloader
+# Instalar dependencias del sistema necesarias
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    curl \
+    libonig-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copiar todo el código de la aplicación
+# Instalar Composer copiándolo desde la imagen oficial de Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Instalar Node.js (utilizando el repositorio de NodeSource para Node.js 18)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# (Opcional) Copiar composer.json y composer.lock para cachear dependencias;
+# sin embargo, dado que el volumen montado del host sobrescribe el contenido,
+# el entrypoint se encargará de ejecutar composer install si es necesario.
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader || true
+
+# Copiar el resto de la aplicación
 COPY . .
 
-# Ajustar permisos para Laravel (storage, bootstrap/cache, etc.)
-RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+# Copiar el script de entrypoint y asignarle permisos de ejecución
+COPY entrypoint.sh /var/www/entrypoint.sh
+RUN chmod +x /var/www/entrypoint.sh
 
-# Copiar el script de entrada (entrypoint)
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
+# Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 8000
 
-CMD ["/entrypoint.sh"]
+# Definir el entrypoint
+CMD ["/var/www/entrypoint.sh"]
