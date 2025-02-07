@@ -41,7 +41,7 @@ services:
       MAIL_FROM_ADDRESS: "hello@example.com"
       MAIL_FROM_NAME: ${APP_NAME}
       
-      # Configuración para la creación del usuario del Sistema
+      # Configuración para la creación del usuario del sistema
       ADMIN_NAME: ${ADMIN_NAME}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
@@ -49,7 +49,6 @@ services:
       - "8000:8000"
     volumes:
       - ./:/var/www
-    entrypoint: ["/var/www/entrypoint.sh"]
     networks:
       - default
 
