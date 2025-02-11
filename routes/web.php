@@ -27,7 +27,7 @@ use App\Http\Controllers\UserController;
 
 // Reportes
 use App\Http\Controllers\KPIReportController;
-
+use App\Http\Controllers\AttendanceController; // Agregar esta línea
 
 
 Route::get('/', function () {
@@ -156,6 +156,15 @@ Route::middleware('auth')->group(function () {
             // También las rutas para PDF y HTML, si las necesitas:
         //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
         //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
+        });
+
+        // Rutas para el controlador de asistencias
+        Route::prefix('attendance')->group(function () {
+            Route::get('upload', [AttendanceController::class, 'showUploadForm'])->name('attendance.upload');
+            Route::post('import', [AttendanceController::class, 'importData'])->name('attendance.import');
+            Route::get('dashboard/{mes?}', [AttendanceController::class, 'dashboard'])
+                ->name('attendance.dashboard')
+                ->where('mes', 'actual|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre');
         });
 });
 

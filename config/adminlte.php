@@ -502,6 +502,22 @@ return [
             'icon' => 'fas fa-users',
             'can' => 'view.users',
         ],
+        [
+            'text' => 'Subir Informe',
+            'url'  => 'attendance/upload',
+            'icon' => 'fas fa-upload',
+        ],
+        [
+            'text'    => 'Informes',
+            'icon'    => 'fas fa-chart-bar',
+            'submenu' => [
+                [
+                    'text' => 'Informe Biométrico',
+                    'url'  => 'attendance/dashboard/actual',
+                    'icon' => 'fas fa-clock',
+                ],
+            ],
+        ],
     ],
 
     /*
