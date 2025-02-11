@@ -503,8 +503,13 @@ return [
             'can' => 'view.users',
         ],
         [
-            'text' => 'Subir Informe',
+            'text' => 'Subir Informe Biometrico',
             'url'  => 'attendance/upload',
+            'icon' => 'fas fa-upload',
+        ],
+        [
+            'text' => 'Subir Informe Ausentismos',
+            'url'  => 'ausentismos/upload',
             'icon' => 'fas fa-upload',
         ],
         [
@@ -515,6 +520,11 @@ return [
                     'text' => 'Informe Biométrico',
                     'url'  => 'attendance/dashboard/actual',
                     'icon' => 'fas fa-clock',
+                ],
+                [
+                    'text' => 'Informe Ausentismos',
+                    'url'  => 'ausentismos/dashboard',
+                    'icon' => 'fas fa-chart-bar',
                 ],
             ],
         ],

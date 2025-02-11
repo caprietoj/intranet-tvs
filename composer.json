@@ -11,11 +11,12 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
-        "jeroennoten/laravel-adminlte": "^3.14",
+        "jeroennoten/laravel-adminlte": "*",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
-        "spatie/laravel-permission": "^6.12"
+        "spatie/laravel-permission": "^6.12",
+        "yajra/laravel-datatables-oracle": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
