@@ -2,20 +2,16 @@
 
 @section('title', 'Bienvenido')
 
-@section('content_header')
-    <h1 class="text-primary"><i class="fas fa-home"></i> Inicio</h1>
-@stop
-
 @section('content')
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-body">
                 <div class="text-center mb-4">
-                    <img src="{{ asset('img/logo-tvs.png') }}" 
+                    <!-- <img src="{{ asset('img/logo-tvs.png') }}" 
                          alt="Logo TVS" 
                          class="img-fluid mb-4"
-                         style="max-width: 300px;">
+                         style="max-width: 300px;"> -->
                     
                     <h2 class="text-primary mb-4">¡Bienvenido, {{ Auth::user()->name }}!</h2>
                 </div>

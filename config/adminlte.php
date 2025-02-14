@@ -517,11 +517,6 @@ return [
             'icon'    => 'fas fa-chart-bar',
             'submenu' => [
                 [
-                    'text' => 'Informe Help-Desk',
-                    'url'  => 'tickets/dashboard',
-                    'icon' => 'fas fa-ticket-alt',
-                ],
-                [
                     'text' => 'Informe Biométrico',
                     'url'  => 'attendance/dashboard/actual',
                     'icon' => 'fas fa-clock',
@@ -531,22 +526,7 @@ return [
                     'url'  => 'ausentismos/dashboard',
                     'icon' => 'fas fa-chart-bar',
                 ],
-                [
-                    'text' => 'Informe de Eventos',
-                    'url'  => 'events/dashboard',
-                    'icon' => 'fas fa-calendar-check',
-                ],
             ],
-        ],
-        [
-            'text' => 'Eventos',
-            'url'  => 'events',
-            'icon' => 'fas fa-calendar-plus',
-        ],
-        [
-            'text' => 'Calendario de Eventos',
-            'url'  => 'events/calendar',
-            'icon' => 'fas fa-calendar',
         ],
     ],
 
