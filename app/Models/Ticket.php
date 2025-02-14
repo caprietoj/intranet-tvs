@@ -15,11 +15,16 @@ class Ticket extends Model
         'titulo', 
         'descripcion', 
         'estado', 
-        'prioridad', 
+        'prioridad',  // Asegúrate de que este campo esté incluido
         'tipo_requerimiento', 
         'user_id',
         'tecnico_id'
     ];
+
+    // Agregar constantes para los valores de prioridad
+    public const PRIORIDAD_ALTA = 'Alta';
+    public const PRIORIDAD_MEDIA = 'Media';
+    public const PRIORIDAD_BAJA = 'Baja';
 
     protected static function booted()
     {
@@ -54,5 +59,25 @@ class Ticket extends Model
     public static function countByPrioridad($prioridad)
     {
         return self::where('prioridad', $prioridad)->count();
+    }
+
+    public function getStatusColor()
+    {
+        return match($this->estado) {
+            'Abierto' => 'warning',
+            'En Proceso' => 'info',
+            'Cerrado' => 'success',
+            default => 'secondary'
+        };
+    }
+
+    public function getPriorityColor()
+    {
+        return match($this->prioridad) {
+            'Alta' => 'danger',
+            'Media' => 'warning',
+            'Baja' => 'success',
+            default => 'secondary'
+        };
     }
 }

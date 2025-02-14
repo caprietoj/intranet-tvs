@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\HomeController;  // Agregar esta línea
 
 // Enfermería
 use App\Http\Controllers\KpiController;
@@ -129,7 +130,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('umbral/{id}', [SistemasThresholdController::class, 'destroySistemas'])->name('umbral.sistemas.destroy');
     });
 
-    //ruta para el controlador de tickets
+    // Ruta del dashboard de tickets (debe ir antes de resource tickets)
+    Route::get('/tickets/dashboard', [HomeController::class, 'dashboard'])->name('tickets.dashboard');
     Route::resource('tickets', TicketController::class);
 
     // ruta para documentos y documentos request
@@ -184,6 +186,12 @@ Route::middleware('auth')->group(function () {
     // Event confirmation routes
     Route::post('events/{event}/confirm', [EventController::class, 'confirm'])->name('events.confirm');
     Route::get('events/{event}/confirm/{token}', [EventController::class, 'confirm'])->name('events.confirm');
+
+    // Ruta para el dashboard de tickets (ahora como informe)
+    Route::get('tickets/dashboard', [HomeController::class, 'dashboard'])->name('tickets.dashboard');
+    
+    // La ruta home ahora mostrará la página de bienvenida
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
 require __DIR__.'/auth.php';
