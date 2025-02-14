@@ -49,7 +49,11 @@
     <div class="col-12">
         <div class="card bg-gradient-info">
             <div class="card-body">
+            @if (empty($mostRequestedService))
+                <h5>No hay informacion</h5>
+            @else
                 <h5>Servicio más solicitado del mes: <strong>{{ $mostRequestedService }}</strong></h5>
+            @endif
                 <p>Total de solicitudes este mes: {{ $eventsThisMonth[$mostRequestedService] }}</p>
             </div>
         </div>
