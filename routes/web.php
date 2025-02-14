@@ -29,6 +29,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KPIReportController;
 use App\Http\Controllers\AttendanceController; // Agregar esta línea
 
+// Eventos
+use App\Http\Controllers\EventController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -127,50 +129,61 @@ Route::middleware('auth')->group(function () {
         Route::delete('umbral/{id}', [SistemasThresholdController::class, 'destroySistemas'])->name('umbral.sistemas.destroy');
     });
 
-        //ruta para el controlador de tickets
-        Route::resource('tickets', TicketController::class);
+    //ruta para el controlador de tickets
+    Route::resource('tickets', TicketController::class);
 
-        // ruta para documentos y documentos request
-        Route::resource('documents', DocumentController::class);
-        Route::resource('document-requests', DocumentRequestController::class);
+    // ruta para documentos y documentos request
+    Route::resource('documents', DocumentController::class);
+    Route::resource('document-requests', DocumentRequestController::class);
 
-        // Group admin routes together
-        Route::prefix('admin')->group(function () {
-            Route::get('/settings', [App\Http\Controllers\AdminSettingsController::class, 'index'])->name('admin.settings');
+    // Group admin routes together
+    Route::prefix('admin')->group(function () {
+        Route::get('/settings', [App\Http\Controllers\AdminSettingsController::class, 'index'])->name('admin.settings');
 
-            Route::resource('roles', App\Http\Controllers\RolesController::class)->names([
-                'index'   => 'roles.index',
-                'create'  => 'roles.create',
-                'store'   => 'roles.store',
-                'edit'    => 'roles.edit',
-                'update'  => 'roles.update',
-                'destroy' => 'roles.destroy',
-            ]);
+        Route::resource('roles', App\Http\Controllers\RolesController::class)->names([
+            'index'   => 'roles.index',
+            'create'  => 'roles.create',
+            'store'   => 'roles.store',
+            'edit'    => 'roles.edit',
+            'update'  => 'roles.update',
+            'destroy' => 'roles.destroy',
+        ]);
 
-            Route::resource('users', UserController::class);
-        });
+        Route::resource('users', UserController::class);
+    });
 
-        // Rutas para el reporte de KPIs
-        Route::group(['prefix' => 'admin'], function () {
+    // Rutas para el reporte de KPIs
+    Route::group(['prefix' => 'admin'], function () {
         Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
-            // También las rutas para PDF y HTML, si las necesitas:
+        // También las rutas para PDF y HTML, si las necesitas:
         //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
         //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
-        });
+    });
 
-        // Rutas para el controlador de asistencias
-        Route::prefix('attendance')->group(function () {
-            Route::get('upload', [AttendanceController::class, 'showUploadForm'])->name('attendance.upload');
-            Route::post('import', [AttendanceController::class, 'importData'])->name('attendance.import');
-            Route::get('dashboard/{mes?}', [AttendanceController::class, 'dashboard'])
-                ->name('attendance.dashboard')
-                ->where('mes', 'actual|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre');
-        });
+    // Rutas para el controlador de asistencias
+    Route::prefix('attendance')->group(function () {
+        Route::get('upload', [AttendanceController::class, 'showUploadForm'])->name('attendance.upload');
+        Route::post('import', [AttendanceController::class, 'importData'])->name('attendance.import');
+        Route::get('dashboard/{mes?}', [AttendanceController::class, 'dashboard'])
+            ->name('attendance.dashboard')
+            ->where('mes', 'actual|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre');
+    });
 
-        Route::get('/ausentismos/upload', [App\Http\Controllers\AusentismoController::class, 'showUploadForm'])->name('ausentismos.upload');
-        Route::post('/ausentismos/store', [App\Http\Controllers\AusentismoController::class, 'store'])->name('ausentismos.store');
-        Route::get('/ausentismos/dashboard', [App\Http\Controllers\AusentismoController::class, 'dashboard'])->name('ausentismos.dashboard');
-        Route::get('/ausentismos/data', [App\Http\Controllers\AusentismoController::class, 'getData'])->name('ausentismos.data');
+    Route::get('/ausentismos/upload', [App\Http\Controllers\AusentismoController::class, 'showUploadForm'])->name('ausentismos.upload');
+    Route::post('/ausentismos/store', [App\Http\Controllers\AusentismoController::class, 'store'])->name('ausentismos.store');
+    Route::get('/ausentismos/dashboard', [App\Http\Controllers\AusentismoController::class, 'dashboard'])->name('ausentismos.dashboard');
+    Route::get('/ausentismos/data', [App\Http\Controllers\AusentismoController::class, 'getData'])->name('ausentismos.data');
+
+    // Special event routes that should come BEFORE the resource route
+    Route::get('events/calendar', [EventController::class, 'calendar'])->name('events.calendar');
+    Route::get('events/dashboard', [EventController::class, 'dashboard'])->name('events.dashboard');
+    
+    // Main events resource route
+    Route::resource('events', EventController::class);
+    
+    // Event confirmation routes
+    Route::post('events/{event}/confirm', [EventController::class, 'confirm'])->name('events.confirm');
+    Route::get('events/{event}/confirm/{token}', [EventController::class, 'confirm'])->name('events.confirm');
 });
 
 require __DIR__.'/auth.php';

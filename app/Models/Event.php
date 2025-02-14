@@ -12,6 +12,7 @@ class Event extends Model
         'request_date' => 'date',
         'service_date' => 'date',
         'event_time' => 'datetime',
+        'end_time' => 'datetime',
         'cafam_parking' => 'boolean',
         'metro_junior_required' => 'boolean',
         'aldimark_required' => 'boolean',

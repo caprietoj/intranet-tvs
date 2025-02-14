@@ -12,7 +12,7 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        $events = Event::orderBy('service_date', 'desc')->get();
         return view('events.index', compact('events'));
     }
 
@@ -51,6 +51,28 @@ class EventController extends Controller
         Mail::to($request->user()->email)->send(new EventConfirmation($event));
 
         return redirect()->route('events.index')->with('success', 'Evento creado exitosamente');
+    }
+
+    public function show(Event $event)
+    {
+        return view('events.show', compact('event'));
+    }
+
+    public function edit(Event $event)
+    {
+        return view('events.edit', compact('event'));
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        $event->update($request->all());
+        return redirect()->route('events.index')->with('success', 'Evento actualizado exitosamente');
+    }
+
+    public function destroy(Event $event)
+    {
+        $event->delete();
+        return redirect()->route('events.index')->with('success', 'Evento eliminado exitosamente');
     }
 
     public function calendar()
@@ -116,11 +138,6 @@ class EventController extends Controller
             }
             return redirect()->back()->with('error', 'Error al confirmar el evento');
         }
-    }
-
-    public function show(Event $event)
-    {
-        return view('events.show', compact('event'));
     }
 
     public function dashboard(Request $request)

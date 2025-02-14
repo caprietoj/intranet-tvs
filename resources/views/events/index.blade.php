@@ -3,79 +3,83 @@
 @section('title', 'Eventos')
 
 @section('content_header')
-    <div class="d-flex justify-content-between">
-        <h1>Lista de Eventos</h1>
-        <a href="{{ route('events.create') }}" class="btn btn-primary">Crear Nuevo Evento</a>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Eventos</h1>
+        <a href="{{ route('events.create') }}" class="btn btn-primary">Crear Evento</a>
     </div>
 @stop
 
 @section('content')
 <div class="card">
     <div class="card-body">
-        <table id="events-table" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Consecutivo</th>
-                    <th>Nombre del Evento</th>
-                    <th>Fecha del Servicio</th>
-                    <th>Responsable</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($events as $event)
-                <tr>
-                    <td>{{ $event->consecutive }}</td>
-                    <td>{{ $event->event_name }}</td>
-                    <td>{{ $event->service_date->format('d/m/Y') }}</td>
-                    <td>{{ $event->responsible }}</td>
-                    <td>
-                        @php
-                            $totalServices = 0;
-                            $confirmedServices = 0;
-                            $services = [
-                                'metro_junior' => $event->metro_junior_required,
-                                'aldimark' => $event->aldimark_required,
-                                'maintenance' => $event->maintenance_required,
-                                'general_services' => $event->general_services_required,
-                                'systems' => $event->systems_required,
-                                'purchases' => $event->purchases_required,
-                                'communications' => $event->communications_required,
-                            ];
-                            
-                            foreach($services as $service => $required) {
-                                if($required) {
-                                    $totalServices++;
-                                    if($event->{$service . '_confirmed'}) {
-                                        $confirmedServices++;
+        <div class="table-responsive">
+            <table class="table table-bordered" id="events-table">
+                <thead>
+                    <tr>
+                        <th>Consecutivo</th>
+                        <th>Evento</th>
+                        <th>Fecha</th>
+                        <th>Lugar</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($events as $event)
+                    <tr>
+                        <td>{{ $event->consecutive }}</td>
+                        <td>{{ $event->event_name }}</td>
+                        <td>{{ $event->service_date->format('d/m/Y') }}</td>
+                        <td>{{ $event->location }}</td>
+                        <td>
+                            @php
+                                $confirmedCount = 0;
+                                $totalRequired = 0;
+                                $services = ['metro_junior', 'aldimark', 'maintenance', 'general_services', 'systems', 'purchases', 'communications'];
+                                foreach($services as $service) {
+                                    $requiredField = $service . '_required';
+                                    $confirmedField = $service . '_confirmed';
+                                    if($event->$requiredField) {
+                                        $totalRequired++;
+                                        if($event->$confirmedField) $confirmedCount++;
                                     }
                                 }
-                            }
-                            
-                            $percentage = $totalServices > 0 ? ($confirmedServices / $totalServices) * 100 : 0;
-                        @endphp
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: {{ $percentage }}%">
-                                {{ number_format($percentage) }}%
+                                $percentage = $totalRequired > 0 ? ($confirmedCount / $totalRequired) * 100 : 0;
+                            @endphp
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ $percentage }}%">
+                                    {{ number_format($percentage) }}%
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-info" onclick="viewDetails({{ $event->id }})">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                        </td>
+                        <td>
+                            <a href="{{ route('events.show', $event) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('events.edit', $event) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('events.destroy', $event) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+<style>
+.progress { height: 20px; }
+</style>
 @stop
 
 @section('js')
@@ -84,13 +88,9 @@ $(document).ready(function() {
     $('#events-table').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-        }
+        },
+        "order": [[2, "desc"]]
     });
 });
-
-function viewDetails(eventId) {
-    // Implementar vista de detalles
-    window.location.href = `/events/${eventId}`;
-}
 </script>
 @stop
