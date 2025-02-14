@@ -3,20 +3,7 @@
 @section('title', 'Dashboard Help-Desk')
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Informe Help-Desk</h1>
-        <div class="btn-group">
-            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                Filtrar por Período
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="?period=today">Hoy</a>
-                <a class="dropdown-item" href="?period=week">Esta Semana</a>
-                <a class="dropdown-item" href="?period=month">Este Mes</a>
-                <a class="dropdown-item" href="?period=all">Todo</a>
-            </div>
-        </div>
-    </div>
+    <h1>Informe Help-Desk</h1>
 @stop
 
 @section('content')

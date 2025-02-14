@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
-use App\Http\Controllers\HomeController;  // Agregar esta línea
 
 // Enfermería
 use App\Http\Controllers\KpiController;
@@ -30,8 +29,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KPIReportController;
 use App\Http\Controllers\AttendanceController; // Agregar esta línea
 
-// Eventos
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventController;  // Agregar esta línea
+use App\Http\Controllers\HomeController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -130,8 +129,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('umbral/{id}', [SistemasThresholdController::class, 'destroySistemas'])->name('umbral.sistemas.destroy');
     });
 
-    // Ruta del dashboard de tickets (debe ir antes de resource tickets)
-    Route::get('/tickets/dashboard', [HomeController::class, 'dashboard'])->name('tickets.dashboard');
+    Route::get('tickets/dashboard', [HomeController::class, 'dashboard'])->name('tickets.dashboard');
     Route::resource('tickets', TicketController::class);
 
     // ruta para documentos y documentos request
@@ -156,10 +154,10 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para el reporte de KPIs
     Route::group(['prefix' => 'admin'], function () {
-        Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
+    Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
         // También las rutas para PDF y HTML, si las necesitas:
-        //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
-        //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
+    //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
+    //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
     });
 
     // Rutas para el controlador de asistencias
@@ -176,22 +174,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ausentismos/dashboard', [App\Http\Controllers\AusentismoController::class, 'dashboard'])->name('ausentismos.dashboard');
     Route::get('/ausentismos/data', [App\Http\Controllers\AusentismoController::class, 'getData'])->name('ausentismos.data');
 
-    // Special event routes that should come BEFORE the resource route
+    // Rutas de eventos - deben ir antes de otras rutas que puedan interferir
     Route::get('events/calendar', [EventController::class, 'calendar'])->name('events.calendar');
     Route::get('events/dashboard', [EventController::class, 'dashboard'])->name('events.dashboard');
-    
-    // Main events resource route
     Route::resource('events', EventController::class);
-    
-    // Event confirmation routes
     Route::post('events/{event}/confirm', [EventController::class, 'confirm'])->name('events.confirm');
     Route::get('events/{event}/confirm/{token}', [EventController::class, 'confirm'])->name('events.confirm');
-
-    // Ruta para el dashboard de tickets (ahora como informe)
-    Route::get('tickets/dashboard', [HomeController::class, 'dashboard'])->name('tickets.dashboard');
-    
-    // La ruta home ahora mostrará la página de bienvenida
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
 require __DIR__.'/auth.php';
