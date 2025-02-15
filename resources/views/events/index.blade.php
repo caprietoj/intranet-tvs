@@ -62,7 +62,7 @@
                             <form action="{{ route('events.destroy', $event) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                <button type="submit" class="btn btn-sm btn-danger delete-event">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -83,6 +83,42 @@
 @stop
 
 @section('js')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // SweetAlert para mensajes de sesión
+    @if(session('swal'))
+        Swal.fire({
+            icon: '{{ session("swal.icon") }}',
+            title: '{{ session("swal.title") }}',
+            text: '{{ session("swal.text") }}',
+            showConfirmButton: true,
+            timer: 3000
+        });
+    @endif
+
+    // SweetAlert para confirmar eliminación
+    $(document).on('click', '.delete-event', function(e) {
+        e.preventDefault();
+        let form = $(this).closest('form');
+        
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
 <script>
 $(document).ready(function() {
     $('#events-table').DataTable({

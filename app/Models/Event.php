@@ -3,14 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Event extends Model
 {
     protected $guarded = [];
 
+    protected $dates = [
+        'request_date',
+        'service_date',
+        'maintenance_setup_date',
+        'general_services_setup_date',
+        'systems_setup_date',
+        'created_at',
+        'updated_at'
+    ];
+
     protected $casts = [
-        'request_date' => 'date',
-        'service_date' => 'date',
+        'request_date' => 'datetime',
+        'service_date' => 'datetime',
         'event_time' => 'datetime',
         'end_time' => 'datetime',
         'cafam_parking' => 'boolean',
@@ -28,6 +39,11 @@ class Event extends Model
         'systems_confirmed' => 'boolean',
         'purchases_confirmed' => 'boolean',
         'communications_confirmed' => 'boolean',
+        'departure_time' => 'datetime',
+        'return_time' => 'datetime',
+        'maintenance_setup_date' => 'datetime',
+        'general_services_setup_date' => 'datetime',
+        'systems_setup_date' => 'datetime',
     ];
 
     public function getStatusColor()

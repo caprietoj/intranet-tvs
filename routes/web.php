@@ -31,6 +31,7 @@ use App\Http\Controllers\AttendanceController; // Agregar esta línea
 
 use App\Http\Controllers\EventController;  // Agregar esta línea
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EquipmentController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -180,6 +181,24 @@ Route::middleware('auth')->group(function () {
     Route::resource('events', EventController::class);
     Route::post('events/{event}/confirm', [EventController::class, 'confirm'])->name('events.confirm');
     Route::get('events/{event}/confirm/{token}', [EventController::class, 'confirm'])->name('events.confirm');
+
+    // Rutas para el módulo de Reserva de Equipos
+    Route::prefix('equipment')->group(function () {
+        // Asegúrate de que esta ruta esté antes de otras rutas más genéricas
+        Route::post('/reset', [EquipmentController::class, 'resetInventory'])
+            ->name('equipment.reset')
+            ->middleware('auth', 'can:equipment.manage');
+            
+        Route::get('/', [EquipmentController::class, 'index'])->name('equipment.index');
+        Route::post('/store', [EquipmentController::class, 'store'])->name('equipment.store');
+        Route::get('/request', [EquipmentController::class, 'showRequestForm'])->name('equipment.request');
+        Route::post('/request', [EquipmentController::class, 'requestLoan'])->name('equipment.request.submit');
+        Route::get('/loans', [EquipmentController::class, 'showLoans'])->name('equipment.loans');
+        Route::get('/inventory', [EquipmentController::class, 'inventory'])->name('equipment.inventory');
+        Route::post('/reset', [EquipmentController::class, 'resetInventory'])->name('equipment.reset')->middleware('can:equipment.manage');
+        Route::get('/dashboard', [EquipmentController::class, 'dashboard'])->name('equipment.dashboard');
+        Route::get('/loans/data', [EquipmentController::class, 'getLoansData'])->name('equipment.loans.data');
+    });
 });
 
 require __DIR__.'/auth.php';

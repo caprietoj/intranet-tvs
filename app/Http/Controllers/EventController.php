@@ -50,7 +50,12 @@ class EventController extends Controller
 
         Mail::to($request->user()->email)->send(new EventConfirmation($event));
 
-        return redirect()->route('events.index')->with('success', 'Evento creado exitosamente');
+        return redirect()->route('events.index')
+            ->with('swal', [
+                'icon' => 'success',
+                'title' => '¡Éxito!',
+                'text' => 'El evento ha sido creado exitosamente.',
+            ]);
     }
 
     public function show(Event $event)
@@ -66,13 +71,23 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         $event->update($request->all());
-        return redirect()->route('events.index')->with('success', 'Evento actualizado exitosamente');
+        return redirect()->route('events.index')
+            ->with('swal', [
+                'icon' => 'success',
+                'title' => '¡Actualizado!',
+                'text' => 'El evento ha sido actualizado exitosamente.',
+            ]);
     }
 
     public function destroy(Event $event)
     {
         $event->delete();
-        return redirect()->route('events.index')->with('success', 'Evento eliminado exitosamente');
+        return redirect()->route('events.index')
+            ->with('swal', [
+                'icon' => 'success',
+                'title' => '¡Eliminado!',
+                'text' => 'El evento ha sido eliminado exitosamente.',
+            ]);
     }
 
     public function calendar()
@@ -215,13 +230,15 @@ class EventController extends Controller
         // Eventos por servicio en el mes actual
         $eventsThisMonth = [];
         foreach ($services as $key => $name) {
-            $eventsThisMonth[$name] = Event::where($key . '_required', true)
+            $count = Event::where($key . '_required', true)
                 ->whereMonth('service_date', now()->month)
                 ->count();
+            $eventsThisMonth[$name] = $count;
         }
 
         // Obtener el servicio más solicitado del mes
-        $mostRequestedService = array_search(max($eventsThisMonth), $eventsThisMonth);
+        $maxCount = max($eventsThisMonth);
+        $mostRequestedService = $maxCount > 0 ? array_search($maxCount, $eventsThisMonth) : 'N/A';
 
         return view('events.dashboard', compact(
             'totalEvents',

@@ -43,6 +43,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'umbral.sistemas.index',
             'view.roles',
             'view.users',
+            'equipment.manage',
+            'equipment.reset'
 
         ];
        

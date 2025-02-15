@@ -299,24 +299,22 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
+        // Navbar items
         [
             'type' => 'navbar-search',
             'text' => 'search',
             'topnav_right' => true,
         ],
-
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
+        // Sidebar items
         [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
-
         [
             'type' => 'dashboard',
             'url' => 'home',
@@ -324,23 +322,40 @@ return [
             'icon' => 'fas fa-fw fa-tachometer-alt',
             'can' => 'view.dashboard',
         ],
-       
-        ['header' => 'CONFIGURACIÓN DE LA CUENTA'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-            'can' => '',
-        ],
-
-        //['header' => 'GESTIÓN DE SOLICITUDES'],
         [
             'text' => 'Help-Desk',
             'url' => 'tickets',
-            'icon' => ' fas fa-ticket-alt',
+            'icon' => 'fas fa-ticket-alt',
             'can' => 'ticket.view',
         ],
-
+        [
+            'text' => 'Reserva de Equipos',
+            'icon' => 'fas fa-laptop',
+            'submenu' => [
+                [
+                    'text' => 'Inventario Inicial',
+                    'url'  => 'equipment/inventory',
+                    'icon' => 'fas fa-clipboard-list',
+                    'can'  => 'equipment.manage',
+                ],
+                [
+                    'text' => 'Gestionar Inventario',
+                    'url'  => 'equipment',
+                    'icon' => 'fas fa-boxes',
+                    'can'  => 'equipment.manage',
+                ],
+                [
+                    'text' => 'Solicitar Préstamo',
+                    'url'  => 'equipment/request',
+                    'icon' => 'fas fa-hand-holding',
+                ],
+                [
+                    'text' => 'Ver Préstamos',
+                    'url'  => 'equipment/loans',
+                    'icon' => 'fas fa-list',
+                ],
+            ],
+        ],
         [
             'text' => 'RRHH',
             'icon' => 'fas fa-users',
@@ -359,8 +374,6 @@ return [
                 ],
             ],
         ],
-        
-      //  ['header' => 'CONFIGURACIÓN DE KPI´S'],
         [
             'text'    => "KPI'S TVS",
             'icon'    => 'fas fa-chart-line',
@@ -486,31 +499,14 @@ return [
             ],
         ],
         [
-            'text' => 'Informe de KPIs',
-            'url'  => 'admin/kpis/report',
-            'icon' => 'fa fa-chart-line',
+            'text' => 'Eventos',
+            'url'  => 'events',
+            'icon' => 'fas fa-calendar-plus',
         ],
         [
-            'text' => 'Roles y Permisos',
-            'url'  => 'admin/roles',
-            'icon' => 'fas fa-user-shield',
-            'can' => 'view.roles',
-        ],
-        [
-            'text' => 'Usuarios',
-            'url'  => 'admin/users',
-            'icon' => 'fas fa-users',
-            'can' => 'view.users',
-        ],
-        [
-            'text' => 'Subir Informe Biometrico',
-            'url'  => 'attendance/upload',
-            'icon' => 'fas fa-upload',
-        ],
-        [
-            'text' => 'Subir Informe Ausentismos',
-            'url'  => 'ausentismos/upload',
-            'icon' => 'fas fa-upload',
+            'text' => 'Calendario de Eventos',
+            'url'  => 'events/calendar',
+            'icon' => 'fas fa-calendar',
         ],
         [
             'text'    => 'Informes',
@@ -536,17 +532,44 @@ return [
                     'url'  => 'events/dashboard',
                     'icon' => 'fas fa-calendar-check',
                 ],
+                [
+                    'text' => 'Informe de KPIs',
+                    'url'  => 'admin/kpis/report',
+                    'icon' => 'fa fa-chart-line',
+                ],
+                [
+                    'text' => 'Informe Préstamo de Equipos',
+                    'url'  => 'equipment/dashboard',
+                    'icon' => 'fas fa-laptop',
+                ],
             ],
         ],
         [
-            'text' => 'Eventos',
-            'url'  => 'events',
-            'icon' => 'fas fa-calendar-plus',
+            'text' => 'profile',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'Calendario de Eventos',
-            'url'  => 'events/calendar',
-            'icon' => 'fas fa-calendar',
+            'text' => 'Usuarios',
+            'url'  => 'admin/users',
+            'icon' => 'fas fa-users',
+            'can' => 'view.users',
+        ],
+        [
+            'text' => 'Roles y Permisos',
+            'url'  => 'admin/roles',
+            'icon' => 'fas fa-user-shield',
+            'can' => 'view.roles',
+        ],
+        [
+            'text' => 'Subir Informe Biometrico',
+            'url'  => 'attendance/upload',
+            'icon' => 'fas fa-upload',
+        ],
+        [
+            'text' => 'Subir Informe Ausentismos',
+            'url'  => 'ausentismos/upload',
+            'icon' => 'fas fa-upload',
         ],
     ],
 
@@ -636,7 +659,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
+                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11',
                 ],
             ],
         ],
