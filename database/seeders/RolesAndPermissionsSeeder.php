@@ -44,7 +44,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.roles',
             'view.users',
             'equipment.manage',
-            'equipment.reset'
+            'equipment.reset',
+            'view.reservations',
+            'view.events',
+            'view.reports',
+            'view.upload'
+
 
         ];
        

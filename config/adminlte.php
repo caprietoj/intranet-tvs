@@ -353,6 +353,7 @@ return [
                     'text' => 'Ver Préstamos',
                     'url'  => 'equipment/loans',
                     'icon' => 'fas fa-list',
+                    'can'  => 'view.reservations',
                 ],
             ],
         ],
@@ -502,6 +503,7 @@ return [
             'text' => 'Eventos',
             'url'  => 'events',
             'icon' => 'fas fa-calendar-plus',
+            'can' => 'view.events',
         ],
         [
             'text' => 'Calendario de Eventos',
@@ -511,6 +513,7 @@ return [
         [
             'text'    => 'Informes',
             'icon'    => 'fas fa-chart-bar',
+            'can'     => 'view.reports',
             'submenu' => [
                 [
                     'text' => 'Informe Help-Desk',
@@ -543,6 +546,7 @@ return [
                     'icon' => 'fas fa-laptop',
                 ],
             ],
+           
         ],
         [
             'text' => 'profile',
@@ -561,16 +565,24 @@ return [
             'icon' => 'fas fa-user-shield',
             'can' => 'view.roles',
         ],
-        [
-            'text' => 'Subir Informe Biometrico',
-            'url'  => 'attendance/upload',
+
+         [
+            'text' => 'Subida de Información',
             'icon' => 'fas fa-upload',
-        ],
-        [
-            'text' => 'Subir Informe Ausentismos',
-            'url'  => 'ausentismos/upload',
-            'icon' => 'fas fa-upload',
-        ],
+            'can' => 'view.upload',
+            'submenu' => [
+                [
+                    'text' => 'Subir Informe Biometrico',
+                    'url'  => 'attendance/upload',
+                    'icon' => 'fas fa-upload',
+                ],
+                 [
+                    'text' => 'Subir Informe Ausentismos',
+                    'url'  => 'ausentismos/upload',
+                    'icon' => 'fas fa-upload',
+                ],
+            ],
+         ]
     ],
 
     /*
