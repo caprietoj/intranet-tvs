@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SistemasKpi;
-use App\Models\SistemasThreshold;
+use App\Models\ContabilidadKpi;
+use App\Models\ContabilidadThreshold;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class SistemasKpiController extends Controller
+class ContabilidadKpiController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    public function indexSistemas()
+    public function indexContabilidad(Request $request)
     {
         // Separar KPIs por tipo
-        $measurementKpis = SistemasKpi::where('type', 'measurement')->get();
-        $informativeKpis = SistemasKpi::where('type', 'informative')->get();
+        $measurementKpis = ContabilidadKpi::where('type', 'measurement')->get();
+        $informativeKpis = ContabilidadKpi::where('type', 'informative')->get();
 
         // Estadísticas para KPIs de Medición
-        $measurementStats = $this->calculateStats($measurementKpis, 'measurement');
-
+        $measurementStats = $this->calculateStats($measurementKpis);
+        
         // Estadísticas para KPIs Informativos
-        $informativeStats = $this->calculateStats($informativeKpis, 'informative');
+        $informativeStats = $this->calculateStats($informativeKpis);
 
         // Datos para el gráfico
         $chartData = [
@@ -33,7 +33,7 @@ class SistemasKpiController extends Controller
             'informativeData' => $informativeKpis->pluck('percentage')
         ];
 
-        return view('kpis.sistemas.index', compact(
+        return view('kpis.contabilidad.index', compact(
             'measurementKpis',
             'informativeKpis',
             'measurementStats',
@@ -42,7 +42,7 @@ class SistemasKpiController extends Controller
         ));
     }
 
-    private function calculateStats($kpis, $type)
+    private function calculateStats($kpis)
     {
         $percentages = $kpis->pluck('percentage')->toArray();
         $count = count($percentages);
@@ -52,9 +52,10 @@ class SistemasKpiController extends Controller
                 'average' => 0,
                 'median' => 0,
                 'stdDev' => 0,
-                'countUnder' => 0,
                 'max' => 0,
-                'min' => 0
+                'min' => 0,
+                'countUnder' => 0,
+                'conclusion' => "No hay KPIs registrados."
             ];
         }
 
@@ -77,32 +78,55 @@ class SistemasKpiController extends Controller
         $max = max($percentages);
         $min = min($percentages);
 
-        // Conteo de KPIs por debajo del umbral
-        $threshold = $type === 'measurement' ? 80 : 50;
+        // KPIs por debajo del umbral
+        $threshold = $kpis->first()->type === 'measurement' ? 80 : 50;
         $countUnder = count(array_filter($percentages, function($p) use ($threshold) {
             return $p < $threshold;
         }));
 
-        return [
-            'average' => $average,
-            'median' => $median,
-            'stdDev' => $stdDev,
+        // Generar conclusión
+        $conclusion = $this->generateConclusion([
+            'count' => $count,
             'countUnder' => $countUnder,
-            'max' => $max,
-            'min' => $min
-        ];
+            'average' => $average,
+            'threshold' => $threshold,
+            'type' => $kpis->first()->type
+        ]);
+
+        return compact('average', 'median', 'stdDev', 'max', 'min', 'countUnder', 'conclusion');
     }
 
-    public function createSistemas()
+    private function generateConclusion($data)
     {
-        $thresholds = SistemasThreshold::all();
-        return view('kpis.sistemas.create', compact('thresholds'));
+        $typeLabel = $data['type'] === 'measurement' ? 'de Medición' : 'Informativos';
+        
+        if ($data['count'] === 0) {
+            return "No hay KPIs {$typeLabel} registrados.";
+        }
+
+        $conclusion = "De un total de {$data['count']} KPIs {$typeLabel}, ";
+        $conclusion .= "{$data['countUnder']} están por debajo del umbral ({$data['threshold']}%). ";
+        $conclusion .= "La media es " . number_format($data['average'], 2) . "%. ";
+
+        if ($data['average'] >= $data['threshold']) {
+            $conclusion .= "El rendimiento general es positivo.";
+        } else {
+            $conclusion .= "Se requiere atención para mejorar el rendimiento.";
+        }
+
+        return $conclusion;
     }
 
-    public function storeSistemas(Request $request)
+    public function createContabilidad()
+    {
+        $thresholds = ContabilidadThreshold::all();
+        return view('kpis.contabilidad.create', compact('thresholds'));
+    }
+
+    public function storeContabilidad(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'threshold_id' => 'required|exists:sistemas_thresholds,id',
+            'threshold_id' => 'required|exists:contabilidad_thresholds,id',
             'type' => 'required|in:measurement,informative',
             'methodology' => 'required|string',
             'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
@@ -116,9 +140,9 @@ class SistemasKpiController extends Controller
                 ->withInput();
         }
 
-        $threshold = SistemasThreshold::findOrFail($request->threshold_id);
+        $threshold = ContabilidadThreshold::findOrFail($request->threshold_id);
         
-        SistemasKpi::create([
+        ContabilidadKpi::create([
             'threshold_id' => $threshold->id,
             'name' => $threshold->kpi_name,
             'type' => $request->type,
@@ -126,30 +150,30 @@ class SistemasKpiController extends Controller
             'frequency' => $request->frequency,
             'measurement_date' => $request->measurement_date,
             'percentage' => $request->percentage,
-            'area' => 'sistemas'
+            'area' => 'contabilidad'
         ]);
 
-        return redirect()->route('kpis.sistemas.index')
-            ->with('success', 'KPI de Sistemas registrado exitosamente.');
+        return redirect()->route('kpis.contabilidad.index')
+            ->with('success', 'KPI de Contabilidad registrado exitosamente.');
     }
 
-    public function showSistemas($id)
+    public function showContabilidad($id)
     {
-        $kpi = SistemasKpi::with('threshold')->findOrFail($id);
-        return view('kpis.sistemas.show', compact('kpi'));
+        $kpi = ContabilidadKpi::with('threshold')->findOrFail($id);
+        return view('kpis.contabilidad.show', compact('kpi'));
     }
 
-    public function editSistemas($id)
+    public function editContabilidad($id)
     {
-        $kpi = SistemasKpi::findOrFail($id);
-        $thresholds = SistemasThreshold::all();
-        return view('kpis.sistemas.edit', compact('kpi', 'thresholds'));
+        $kpi = ContabilidadKpi::findOrFail($id);
+        $thresholds = ContabilidadThreshold::all();
+        return view('kpis.contabilidad.edit', compact('kpi', 'thresholds'));
     }
 
-    public function updateSistemas(Request $request, $id)
+    public function updateContabilidad(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'threshold_id' => 'required|exists:sistemas_thresholds,id',
+            'threshold_id' => 'required|exists:contabilidad_thresholds,id',
             'type' => 'required|in:measurement,informative',
             'methodology' => 'required|string',
             'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
@@ -163,8 +187,8 @@ class SistemasKpiController extends Controller
                 ->withInput();
         }
 
-        $kpi = SistemasKpi::findOrFail($id);
-        $threshold = SistemasThreshold::findOrFail($request->threshold_id);
+        $kpi = ContabilidadKpi::findOrFail($id);
+        $threshold = ContabilidadThreshold::findOrFail($request->threshold_id);
 
         $kpi->update([
             'threshold_id' => $threshold->id,
@@ -174,21 +198,21 @@ class SistemasKpiController extends Controller
             'frequency' => $request->frequency,
             'measurement_date' => $request->measurement_date,
             'percentage' => $request->percentage,
-            'area' => 'sistemas'
+            'area' => 'contabilidad'
         ]);
 
-        return redirect()->route('kpis.sistemas.index')
-            ->with('success', 'KPI de Sistemas actualizado exitosamente.');
+        return redirect()->route('kpis.contabilidad.index')
+            ->with('success', 'KPI de Contabilidad actualizado exitosamente.');
     }
 
-    public function destroySistemas($id)
+    public function destroyContabilidad($id)
     {
         try {
-            $kpi = SistemasKpi::findOrFail($id);
+            $kpi = ContabilidadKpi::findOrFail($id);
             $kpi->delete();
             return response()->json([
                 'success' => true,
-                'message' => 'KPI de Sistemas eliminado exitosamente.'
+                'message' => 'KPI de Contabilidad eliminado exitosamente.'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -196,30 +220,5 @@ class SistemasKpiController extends Controller
                 'message' => 'Error al eliminar el KPI: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    private function generateConclusion($stats, $type)
-    {
-        $threshold = $type === 'measurement' ? 80 : 50;
-        $totalKpis = $stats['countUnder'] + count(array_filter($stats, function($p) use ($threshold) {
-            return $p >= $threshold;
-        }));
-
-        if ($totalKpis === 0) {
-            return "No hay KPIs {$type} registrados.";
-        }
-
-        $conclusion = "De un total de {$totalKpis} KPIs {$type}, ";
-        $conclusion .= "{$stats['countUnder']} están por debajo del umbral ({$threshold}%). ";
-        $conclusion .= "La media es {$stats['average']}% ";
-        $conclusion .= "con una desviación estándar de {$stats['stdDev']}. ";
-        
-        if ($stats['average'] >= $threshold) {
-            $conclusion .= "El rendimiento general es positivo.";
-        } else {
-            $conclusion .= "Se requiere atención para mejorar el rendimiento.";
-        }
-
-        return $conclusion;
     }
 }

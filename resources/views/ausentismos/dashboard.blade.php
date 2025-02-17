@@ -10,6 +10,7 @@
         <div class="col-sm-6">
             <select id="mesSelector" class="form-control float-right" style="width: 200px;">
                 <option value="">Todos los meses</option>
+ausentismos
                 <option value="Enero">Enero</option>
                 <option value="Febrero">Febrero</option>
                 <option value="Marzo">Marzo</option>

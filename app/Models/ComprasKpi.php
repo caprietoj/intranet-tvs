@@ -19,6 +19,7 @@ class ComprasKpi extends Model
         'frequency',
         'measurement_date',
         'percentage',
+        'type'
     ];
 
     public function threshold()
@@ -26,9 +27,11 @@ class ComprasKpi extends Model
         return $this->belongsTo(ComprasThreshold::class, 'threshold_id');
     }
 
-    // Accesor que devuelve el estado basado en el threshold configurado
     public function getStatusAttribute()
     {
+        if (!$this->relationLoaded('threshold')) {
+            $this->load('threshold');
+        }
         $thresholdValue = $this->threshold ? $this->threshold->value : 80;
         return ($this->percentage >= $thresholdValue) ? 'Alcanzado' : 'No Alcanzado';
     }

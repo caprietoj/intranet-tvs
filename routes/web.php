@@ -20,6 +20,11 @@ use App\Http\Controllers\RecursosHumanosThresholdController;
 use App\Http\Controllers\SistemasKpiController;
 use App\Http\Controllers\SistemasThresholdController;
 
+// contabilidad
+use App\Http\Controllers\ContabilidadKpiController;
+use App\Http\Controllers\ContabilidadThresholdController;
+
+
 // Documentos
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentRequestController;
@@ -109,6 +114,35 @@ Route::middleware('auth')->group(function () {
         Route::put('umbral', [RecursosHumanosThresholdController::class, 'updateRecursosHumanos'])->name('umbral.rrhh.update');
         Route::get('umbral/show', [RecursosHumanosThresholdController::class, 'showRecursosHumanos'])->name('umbral.rrhh.show');
         Route::delete('umbral/{id}', [RecursosHumanosThresholdController::class, 'destroyRecursosHumanos'])->name('umbral.rrhh.destroy');
+    });
+
+    // Remove or comment out old contabilidad routes
+    // Route::prefix('kpis/contabilidad')... 
+    // Route::prefix('threshold/contabilidad')...
+
+    // Add consolidated contabilidad routes
+    Route::prefix('contabilidad')->middleware(['auth'])->group(function () {
+        // KPI routes
+        Route::prefix('kpis')->name('kpis.contabilidad.')->group(function () {
+            Route::get('/', [ContabilidadKpiController::class, 'indexContabilidad'])->name('index');
+            Route::get('/create', [ContabilidadKpiController::class, 'createContabilidad'])->name('create');
+            Route::post('/', [ContabilidadKpiController::class, 'storeContabilidad'])->name('store');
+            Route::get('/{id}', [ContabilidadKpiController::class, 'showContabilidad'])->name('show');
+            Route::get('/{id}/edit', [ContabilidadKpiController::class, 'editContabilidad'])->name('edit');
+            Route::put('/{id}', [ContabilidadKpiController::class, 'updateContabilidad'])->name('update');
+            Route::delete('/{id}', [ContabilidadKpiController::class, 'destroyContabilidad'])->name('destroy');
+        });
+
+        // Umbral routes
+        Route::prefix('umbral')->name('umbral.contabilidad.')->group(function () {
+            Route::get('/', [ContabilidadThresholdController::class, 'indexContabilidad'])->name('index');
+            Route::get('/create', [ContabilidadThresholdController::class, 'createContabilidad'])->name('create');
+            Route::post('/', [ContabilidadThresholdController::class, 'storeContabilidad'])->name('store');
+            Route::get('/show', [ContabilidadThresholdController::class, 'showContabilidad'])->name('show');
+            Route::get('/{id}/edit', [ContabilidadThresholdController::class, 'editContabilidad'])->name('edit');
+            Route::put('/{id}', [ContabilidadThresholdController::class, 'updateContabilidad'])->name('update');
+            Route::delete('/{id}', [ContabilidadThresholdController::class, 'destroyContabilidad'])->name('destroy');
+        });
     });
 
     Route::prefix('sistemas')->group(function () {

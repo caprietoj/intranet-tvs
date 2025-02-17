@@ -14,10 +14,12 @@ class RecursosHumanosKpi extends Model
     protected $fillable = [
         'threshold_id',
         'name',
+        'type',
         'methodology',
         'frequency',
         'measurement_date',
         'percentage',
+        'area'
     ];
 
     public function threshold()
@@ -25,7 +27,6 @@ class RecursosHumanosKpi extends Model
         return $this->belongsTo(RecursosHumanosThreshold::class, 'threshold_id');
     }
 
-    // Accesor para determinar el estado basado en el umbral configurado
     public function getStatusAttribute()
     {
         $thresholdValue = $this->threshold ? $this->threshold->value : 80;

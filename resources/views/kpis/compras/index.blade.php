@@ -1,35 +1,37 @@
-{{-- resources/views/kpis/compras/index.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Ver KPI - Compras')
+@section('title', 'KPIs de Compras')
 
 @section('content_header')
-    <h1>Listado de KPIs - Compras</h1>
+    <h1>Gestión de KPIs - Área de Compras</h1>
 @stop
 
 @section('content')
-<div class="card">
-    <div class="card-header">
+<div class="row mb-3">
+    <div class="col-md-12">
         <div class="float-right">
             <form method="GET" action="{{ route('kpis.compras.index') }}" class="form-inline">
                 <label for="month" class="mr-2">Filtrar por Mes:</label>
-                <select name="month" id="month" class="form-control mr-2" onchange="this.form.submit()">
-                    <option value="">Todos</option>
+                <select name="month" id="month" class="form-control select2bs4 mr-2" onchange="this.form.submit()">
+                    <option value="">Todos los meses</option>
                     @for($m = 1; $m <= 12; $m++)
-                        <option value="{{ $m }}" {{ request('month')==$m ? 'selected' : '' }}>
+                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
                             {{ DateTime::createFromFormat('!m', $m)->format('F') }}
                         </option>
                     @endfor
                 </select>
             </form>
         </div>
-        <h3 class="card-title">KPIs Registrados</h3>
+    </div>
+</div>
+
+<!-- KPIs de Medición -->
+<div class="card">
+    <div class="card-header bg-primary">
+        <h3 class="card-title text-white">KPIs de Medición</h3>
     </div>
     <div class="card-body">
-        @if(session('success'))
-          <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        <table id="kpiTable" class="table table-bordered table-striped">
+        <table id="measurementKpiTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -43,23 +45,35 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($kpis as $kpi)
+                @foreach($kpis->where('type', 'measurement') as $kpi)
                 <tr>
                     <td>{{ $kpi->id }}</td>
-                    <td>{{ $kpi->name }}</td>
+                    <td>{{ $kpi->threshold->kpi_name }}</td>
                     <td>{{ $kpi->methodology }}</td>
                     <td>{{ $kpi->frequency }}</td>
                     <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
                     <td>{{ $kpi->percentage }}%</td>
                     <td>
-                        <span class="badge {{ $kpi->status=='Alcanzado' ? 'badge-success' : 'badge-danger' }}">
-                            {{ $kpi->status }}
+                        @php
+                            $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
+                            $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
+                        @endphp
+                        <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
+                            {{ $status }}
                         </span>
                     </td>
                     <td>
-                        <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">Ver</a>
-                        <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">Editar</a>
-                        <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">Eliminar</button>
+                        <div class="btn-group">
+                            <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -68,93 +82,244 @@
     </div>
 </div>
 
-<!-- Análisis Estadístico y Gráfica -->
-<div class="card mt-3">
-    <div class="card-header">
-        <h3 class="card-title">Análisis Estadístico</h3>
+<!-- KPIs Informativos -->
+<div class="card mt-4">
+    <div class="card-header bg-info">
+        <h3 class="card-title text-white">KPIs Informativos</h3>
+    </div>
+    <div class="card-body">
+        <table id="informativeKpiTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del KPI</th>
+                    <th>Metodología</th>
+                    <th>Frecuencia</th>
+                    <th>Fecha de Medición</th>
+                    <th>Porcentaje</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($kpis->where('type', 'informative') as $kpi)
+                <tr>
+                    <td>{{ $kpi->id }}</td>
+                    <td>{{ $kpi->threshold->kpi_name }}</td>
+                    <td>{{ $kpi->methodology }}</td>
+                    <td>{{ $kpi->frequency }}</td>
+                    <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
+                    <td>{{ $kpi->percentage }}%</td>
+                    <td>
+                        @php
+                            $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
+                            $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
+                        @endphp
+                        <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
+                            {{ $status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Análisis Estadístico -->
+<div class="card mt-4">
+    <div class="card-header bg-success">
+        <h3 class="card-title text-white">Análisis Estadístico</h3>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <p><strong>Media:</strong> {{ number_format($average,2) }}%</p>
-                <p><strong>Mediana:</strong> {{ number_format($median,2) }}%</p>
-                <p><strong>Desviación Estándar:</strong> {{ number_format($stdDev,2) }}</p>
+                <div class="info-box">
+                    <span class="info-box-icon bg-info"><i class="fas fa-chart-line"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Estadísticas Generales</span>
+                        <span class="info-box-number">Media: {{ number_format($average, 2) }}%</span>
+                        <span class="info-box-number">Mediana: {{ number_format($median, 2) }}%</span>
+                        <span class="info-box-number">Desviación Estándar: {{ number_format($stdDev, 2) }}</span>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <p><strong>Valor Máximo:</strong> {{ $max }}%</p>
-                <p><strong>Valor Mínimo:</strong> {{ $min }}%</p>
-                <p><strong>KPIs por debajo del umbral:</strong> {{ $countUnder }}</p>
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning"><i class="fas fa-chart-bar"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Valores Extremos</span>
+                        <span class="info-box-number">Máximo: {{ $max }}%</span>
+                        <span class="info-box-number">Mínimo: {{ $min }}%</span>
+                        <span class="info-box-number">KPIs bajo umbral: {{ $countUnder }}</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <p><strong>Conclusión:</strong> {{ $conclusion }}</p>
-        <canvas id="kpiChart" style="height:300px;"></canvas>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Comparativa de KPIs</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="kpiChart" style="min-height: 400px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-3">
+            <h5><i class="icon fas fa-info"></i> Conclusión del Análisis</h5>
+            <p>{{ $conclusion }}</p>
+        </div>
     </div>
 </div>
 @stop
 
 @section('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .select2-container--bootstrap4 .select2-selection {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    .select2-container--bootstrap4 .select2-selection--single {
+        height: 38px !important;
+        padding: 0.375rem 0.75rem;
+        line-height: 1.5;
+    }
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+        padding-left: 0;
+        line-height: 1.5;
+        color: #495057;
+    }
+</style>
 @stop
 
 @section('js')
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-$(document).ready(function(){
-    $('#kpiTable').DataTable();
 
-    var labels = {!! json_encode($kpis->pluck('name')) !!};
-    var dataPercentages = {!! json_encode($kpis->pluck('percentage')) !!};
+<script>
+$(document).ready(function() {
+    // Inicializar DataTables
+    $('#measurementKpiTable, #informativeKpiTable').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+        }
+    });
+
+    // Inicializar Select2
+    $('.select2bs4').select2({
+        theme: 'bootstrap4',
+        width: '100%'
+    });
+
+    // Configuración del gráfico
     var ctx = document.getElementById('kpiChart').getContext('2d');
-    var kpiChart = new Chart(ctx, {
+    var measurementKpis = {!! json_encode($kpis->where('type', 'measurement')->pluck('percentage', 'name')) !!};
+    var informativeKpis = {!! json_encode($kpis->where('type', 'informative')->pluck('percentage', 'name')) !!};
+
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
-            datasets: [{
-                label: 'Porcentaje Alcanzado',
-                data: dataPercentages,
-                backgroundColor: 'rgba(54,162,235,0.5)',
-                borderColor: 'rgba(54,162,235,1)',
-                borderWidth: 1
-            }]
+            labels: [...Object.keys(measurementKpis), ...Object.keys(informativeKpis)],
+            datasets: [
+                {
+                    label: 'KPIs de Medición',
+                    data: Object.values(measurementKpis),
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'KPIs Informativos',
+                    data: Object.values(informativeKpis),
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             responsive: true,
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Porcentaje (%)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Comparativa de KPIs por Tipo'
                 }
             }
         }
     });
 
-    $('.delete-kpi').click(function(){
-        var kpiId = $(this).data('id');
+    // Manejo de eliminación de KPIs
+    $('.delete-kpi').click(function() {
+        const kpiId = $(this).data('id');
         Swal.fire({
             title: '¿Estás seguro?',
-            text: "Esta acción eliminará el KPI.",
+            text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar'
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: '/compras/kpis/' + kpiId,
+                    url: `/compras/kpis/${kpiId}`,
                     type: 'DELETE',
-                    data: { _token: '{{ csrf_token() }}' },
-                    success: function(response){
-                        Swal.fire('Eliminado!', response.message, 'success').then(()=>{
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'El KPI ha sido eliminado.',
+                            'success'
+                        ).then(() => {
                             location.reload();
                         });
                     },
-                    error: function(){
-                        Swal.fire('Error!', 'No se pudo eliminar el KPI.', 'error');
+                    error: function() {
+                        Swal.fire(
+                            'Error',
+                            'No se pudo eliminar el KPI.',
+                            'error'
+                        );
                     }
                 });
             }

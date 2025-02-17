@@ -48,7 +48,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.reservations',
             'view.events',
             'view.reports',
-            'view.upload'
+            'view.upload',
+            'kpis.contabilidad.create',
+            'kpis.contabilidad.index',
+            'umbral.contabilidad.create',
+            'umbral.contabilidad.show'
 
 
         ];

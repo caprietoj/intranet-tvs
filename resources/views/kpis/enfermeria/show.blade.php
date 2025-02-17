@@ -25,7 +25,7 @@
     </div>
     <div class="card-footer">
         <a href="{{ route('kpis.enfermeria.edit', $kpi->id) }}" class="btn btn-primary">Editar</a>
-        <a href="{{ route('kpis.enfermeria.create') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ route('kpis.enfermeria.index') }}" class="btn btn-secondary">Volver</a>
     </div>
 </div>
 @stop

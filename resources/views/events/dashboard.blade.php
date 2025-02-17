@@ -49,12 +49,13 @@
     <div class="col-12">
         <div class="card bg-gradient-info">
             <div class="card-body">
-            @if (empty($mostRequestedService))
-                <h5>No hay informacion</h5>
+            @if (empty($mostRequestedService) || empty($eventsThisMonth[$mostRequestedService] ?? null))
+                <h5>No hay servicios solicitados este mes</h5>
+                <p>Total de solicitudes este mes: 0</p>
             @else
                 <h5>Servicio más solicitado del mes: <strong>{{ $mostRequestedService }}</strong></h5>
-            @endif
                 <p>Total de solicitudes este mes: {{ $eventsThisMonth[$mostRequestedService] }}</p>
+            @endif
             </div>
         </div>
     </div>
@@ -100,7 +101,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($events as $event)
+                    @forelse($events as $event)
                     <tr>
                         <td>{{ $event->consecutive }}</td>
                         <td>{{ $event->event_name }}</td>
@@ -137,9 +138,14 @@
                             <a href="{{ route('events.show', $event) }}" class="btn btn-sm btn-info">
                                 <i class="fas fa-eye"></i>
                             </a>
+                            {{ $event['N/A'] ?? '-' }}
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center">No hay eventos registrados</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -185,49 +191,60 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de ubicaciones
-    new Chart(document.getElementById('locationChart'), {
-        type: 'pie',
-        data: {
-            labels: {!! json_encode($eventsByLocation->pluck('location')) !!},
-            datasets: [{
-                data: {!! json_encode($eventsByLocation->pluck('total')) !!},
-                backgroundColor: [
-                    '#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc',
-                    '#d2d6de', '#932ab6', '#7c8184', '#4CAF50', '#FF5722'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+    const locationData = {!! json_encode($eventsByLocation->pluck('location')) !!};
+    const serviceData = {!! json_encode(array_keys($eventsByService)) !!};
 
-    // Gráfico de servicios
-    new Chart(document.getElementById('serviceChart'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode(array_keys($eventsByService)) !!},
-            datasets: [{
-                label: 'Cantidad de Eventos',
-                data: {!! json_encode(array_values($eventsByService)) !!},
-                backgroundColor: '#3c8dbc'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+    if (locationData.length > 0) {
+        new Chart(document.getElementById('locationChart'), {
+            type: 'pie',
+            data: {
+                labels: locationData,
+                datasets: [{
+                    data: {!! json_encode($eventsByLocation->pluck('total')) !!},
+                    backgroundColor: [
+                        '#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc',
+                        '#d2d6de', '#932ab6', '#7c8184', '#4CAF50', '#FF5722'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    } else {
+        document.getElementById('locationChart').insertAdjacentHTML('beforebegin', 
+            '<div class="text-center text-muted">No hay datos disponibles</div>');
+    }
+
+    if (serviceData.length > 0) {
+        new Chart(document.getElementById('serviceChart'), {
+            type: 'bar',
+            data: {
+                labels: serviceData,
+                datasets: [{
+                    label: 'Cantidad de Eventos',
+                    data: {!! json_encode(array_values($eventsByService)) !!},
+                    backgroundColor: '#3c8dbc'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    } else {
+        document.getElementById('serviceChart').insertAdjacentHTML('beforebegin', 
+            '<div class="text-center text-muted">No hay datos disponibles</div>');
+    }
 });
 
 $(document).ready(function() {

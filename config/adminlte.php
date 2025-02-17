@@ -497,8 +497,39 @@ return [
                     ],
 
                 ],
+
+                [
+                    'text'    => 'Contabilidad',
+                    'submenu' => [
+                        [
+                            'text' => 'Crear KPI',
+                            'url'  => 'contabilidad/kpis/create',
+                            'icon' => '',
+                            'can' => 'kpis.contabilidad.create',
+                        ],
+                        [
+                            'text' => 'Ver KPI',
+                            'url'  => 'contabilidad/kpis',
+                            'icon' => '',
+                            'can' => 'kpis.contabilidad.index',
+                        ],
+                        [
+                            'text' => 'Crear Umbral',
+                            'url'  => 'threshold/contabilidad/create',
+                            'icon' => '',
+                            'can' => 'umbral.contabilidad.create',
+                        ],
+                        [
+                            'text' => 'Ver Umbral',
+                            'url'  => 'threshold/contabilidad/show',
+                            'icon' => '',
+                            'can' => 'umbral.contabilidad.show',
+                        ],
+                    ],
+                ],
             ],
         ],
+
         [
             'text' => 'Eventos',
             'url'  => 'events',

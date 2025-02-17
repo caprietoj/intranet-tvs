@@ -16,132 +16,163 @@ class KpiController extends Controller
 
     /**
      * Muestra el listado de KPIs para el área de Enfermería junto con el análisis estadístico.
-     *
-     * Variables calculadas:
-     * - $kpis: Colección de KPIs para Enfermería.
-     * - $average: Media de los porcentajes alcanzados.
-     * - $median: Mediana de los porcentajes.
-     * - $stdDev: Desviación estándar.
-     * - $max: Valor máximo.
-     * - $min: Valor mínimo.
-     * - $countUnder: Cantidad de KPIs cuyo porcentaje está por debajo del umbral.
-     * - $conclusion: Conclusión automática basada en los datos.
      */
     public function indexEnfermeria(Request $request)
     {
-        // Filtrado opcional por mes
+      // Filtrado opcional por mes
         $month = $request->input('month');
-        $query = Kpi::where('area', 'enfermeria');
+        $query = Kpi::with('threshold')->where('area', 'enfermeria'); // Agregamos with('threshold')
+        
         if ($month) {
             $query->whereMonth('measurement_date', $month);
         }
+        
         $kpis = $query->orderBy('measurement_date', 'desc')->get();
 
-        // Extraer los porcentajes de cada KPI
+        // Calcular estadísticas generales
+        $count = $kpis->count();
         $percentages = $kpis->pluck('percentage')->toArray();
-        $count = count($percentages);
 
-        // Calcular la media
+        // Calcular estadísticas por tipo de KPI
+        $measurementKpis = $kpis->where('type', 'measurement');
+        $informativeKpis = $kpis->where('type', 'informative');
+
+        $measurementStats = [
+            'total' => $measurementKpis->count(),
+            'average' => $measurementKpis->avg('percentage') ?? 0,
+            'countUnder' => $measurementKpis->filter(function($kpi) {
+                return $kpi->status === 'No Alcanzado';
+            })->count()
+        ];
+
+        $informativeStats = [
+            'total' => $informativeKpis->count(),
+            'average' => $informativeKpis->avg('percentage') ?? 0,
+            'countUnder' => $informativeKpis->filter(function($kpi) {
+                return $kpi->status === 'No Alcanzado';
+            })->count()
+        ];
+
+        // Calcular estadísticas generales
         $average = $count > 0 ? array_sum($percentages) / $count : 0;
-
-        // Calcular la mediana
+        
+        // Calcular mediana
         if ($count > 0) {
             sort($percentages);
             $middle = floor($count / 2);
-            if ($count % 2 == 0) {
-                $median = ($percentages[$middle - 1] + $percentages[$middle]) / 2;
-            } else {
-                $median = $percentages[$middle];
-            }
+            $median = ($count % 2 == 0) 
+                ? ($percentages[$middle - 1] + $percentages[$middle]) / 2 
+                : $percentages[$middle];
         } else {
             $median = 0;
         }
 
-        // Calcular la desviación estándar
+        // Calcular desviación estándar y coeficiente de variación
         if ($count > 0) {
-            $variance = 0;
-            foreach ($percentages as $p) {
-                $variance += pow($p - $average, 2);
-            }
-            $variance /= $count;
+            $variance = array_reduce($percentages, function($carry, $item) use ($average) {
+                return $carry + pow($item - $average, 2);
+            }, 0) / $count;
             $stdDev = sqrt($variance);
+            $coefficientOfVariation = ($average > 0) ? ($stdDev / $average) * 100 : 0;
         } else {
             $stdDev = 0;
+            $coefficientOfVariation = 0;
         }
 
-        // Obtener valor máximo y mínimo
+        // Obtener valores máximo y mínimo
         $max = $count > 0 ? max($percentages) : 0;
         $min = $count > 0 ? min($percentages) : 0;
+        $range = $max - $min;
 
-        // Obtener el umbral configurado para Enfermería; si no existe, usar 80 por defecto
+        // Obtener el umbral configurado
         $thresholdRecord = Threshold::where('area', 'enfermeria')->first();
         $thresholdValue = $thresholdRecord ? $thresholdRecord->value : 80;
 
-        // Contar cuántos KPIs tienen porcentaje inferior al umbral
-        $countUnder = 0;
-        foreach ($percentages as $p) {
-            if ($p < $thresholdValue) {
-                $countUnder++;
-            }
-        }
+        // Contar KPIs bajo el umbral
+        $countUnder = $kpis->filter(function($kpi) {
+            return $kpi->status === 'No Alcanzado';
+        })->count();
+        
+        $percentageUnder = $count > 0 ? ($countUnder / $count) * 100 : 0;
 
-        // Generar conclusión basada en los datos:
+        // Generar conclusión estadística profesional
         if ($count == 0) {
-            $conclusion = "No hay KPIs registrados.";
-        } elseif ($countUnder == $count) {
-            $conclusion = "Ningún KPI alcanza el umbral ({$thresholdValue}%).";
-        } elseif ($countUnder == 0) {
-            $conclusion = "Todos los KPIs están por encima del umbral ({$thresholdValue}%).";
+            $conclusion = "No hay KPIs registrados para realizar un análisis estadístico.";
         } else {
-            $conclusion = "De un total de {$count} KPIs, {$countUnder} están por debajo del umbral ({$thresholdValue}%).";
+            $conclusion = "Análisis Estadístico: De un total de {$count} KPIs analizados, " .
+                "se observa una media general de " . number_format($average, 2) . "% con una " .
+                "desviación estándar de " . number_format($stdDev, 2) . ". " .
+                "Los KPIs de Medición muestran un promedio de " . number_format($measurementStats['average'], 2) . "%, " .
+                "mientras que los KPIs Informativos promedian " . number_format($informativeStats['average'], 2) . "%. " .
+                "El coeficiente de variación es de " . number_format($coefficientOfVariation, 2) . "%, " .
+                "lo que indica " . ($coefficientOfVariation < 15 ? "una baja" : ($coefficientOfVariation < 30 ? "una moderada" : "una alta")) . 
+                " dispersión en los datos. " .
+                "Un " . number_format($percentageUnder, 2) . "% de los KPIs está por debajo del umbral establecido (" . $thresholdValue . "%).";
         }
 
-        return view('kpis.enfermeria.index', compact('kpis', 'average', 'median', 'stdDev', 'max', 'min', 'countUnder', 'conclusion'));
+        return view('kpis.enfermeria.index', compact(
+            'kpis',
+            'average',
+            'median',
+            'stdDev',
+            'coefficientOfVariation',
+            'max',
+            'min',
+            'range',
+            'countUnder',
+            'percentageUnder',
+            'conclusion',
+            'measurementStats',
+            'informativeStats'
+        ));
     }
 
     /**
-     * Muestra el formulario para crear un nuevo KPI para el área de Enfermería.
+     * Muestra el formulario para crear un nuevo KPI.
      */
     public function createEnfermeria()
     {
-        // Se obtienen los thresholds configurados para el área "enfermeria"
         $thresholds = Threshold::where('area', 'enfermeria')->get();
-        return view('kpis.enfermeria.create', compact('thresholds'));
+        $types = [
+            'measurement' => 'Medición',
+            'informative' => 'Informativo'
+        ];
+        return view('kpis.enfermeria.create', compact('thresholds', 'types'));
     }
 
     /**
-     * Almacena un nuevo KPI para el área de Enfermería.
+     * Almacena un nuevo KPI.
      */
     public function storeEnfermeria(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'threshold_id'     => 'required|exists:thresholds,id',
-            'methodology'      => 'required|string',
-            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual',
+            'type' => 'required|in:measurement,informative',
+            'threshold_id' => 'required|exists:thresholds,id',
+            'methodology' => 'required|string',
+            'frequency' => 'required|string|in:Diario,Quincenal,Mensual,Semestral',
             'measurement_date' => 'required|date',
-            'percentage'       => 'required|numeric|min:0|max:100',
+            'percentage' => 'required|numeric|min:0|max:100',
         ]);
-
+    
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-
-        // Obtener la configuración del KPI (threshold) seleccionado
+    
         $threshold = Threshold::findOrFail($request->threshold_id);
         $data = $request->all();
-        // Asignar el nombre del KPI según lo configurado en el threshold
         $data['name'] = $threshold->kpi_name;
-        $data['threshold_id'] = $threshold->id;
         $data['area'] = 'enfermeria';
-
+    
         Kpi::create($data);
-
-        // Redirige al listado de KPIs (Ver KPI)
-        return redirect()->route('kpis.enfermeria.index')->with('success', 'KPI de Enfermería registrado exitosamente.');
+    
+        return redirect()->route('kpis.enfermeria.index')
+            ->with('success', 'KPI registrado exitosamente.');
     }
 
     /**
-     * Muestra los detalles de un KPI para el área de Enfermería.
+     * Muestra los detalles de un KPI específico.
      */
     public function showEnfermeria($id)
     {
@@ -150,7 +181,7 @@ class KpiController extends Controller
     }
 
     /**
-     * Muestra el formulario para editar un KPI para el área de Enfermería.
+     * Muestra el formulario para editar un KPI.
      */
     public function editEnfermeria($id)
     {
@@ -160,42 +191,48 @@ class KpiController extends Controller
     }
 
     /**
-     * Actualiza un KPI para el área de Enfermería.
+     * Actualiza un KPI específico.
      */
     public function updateEnfermeria(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'threshold_id'     => 'required|exists:thresholds,id',
-            'methodology'      => 'required|string',
-            'frequency'        => 'required|string|in:Diario,Quincenal,Mensual',
+            'threshold_id' => 'required|exists:thresholds,id',
+            'methodology' => 'required|string',
+            'frequency' => 'required|string|in:Diario,Quincenal,Mensual,Semestral',
             'measurement_date' => 'required|date',
-            'percentage'       => 'required|numeric|min:0|max:100',
+            'percentage' => 'required|numeric|min:0|max:100',
+            'type' => 'required|in:measurement,informative'
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $kpi = Kpi::findOrFail($id);
         $threshold = Threshold::findOrFail($request->threshold_id);
+        
         $data = $request->all();
         $data['name'] = $threshold->kpi_name;
-        $data['threshold_id'] = $threshold->id;
         $data['area'] = 'enfermeria';
 
         $kpi->update($data);
 
-        return redirect()->route('kpis.enfermeria.show', $kpi->id)->with('success', 'KPI de Enfermería actualizado exitosamente.');
+        return redirect()->route('kpis.enfermeria.index')
+            ->with('success', 'KPI actualizado exitosamente.');
     }
 
     /**
-     * Elimina un KPI para el área de Enfermería.
-     * Este método devuelve una respuesta JSON para integrarlo con SweetAlert2.
+     * Elimina un KPI específico.
      */
     public function destroyEnfermeria($id)
     {
         $kpi = Kpi::findOrFail($id);
         $kpi->delete();
-        return response()->json(['message' => 'KPI de Enfermería eliminado exitosamente.'], 200);
+        
+        return response()->json([
+            'message' => 'KPI eliminado exitosamente.'
+        ], 200);
     }
 }

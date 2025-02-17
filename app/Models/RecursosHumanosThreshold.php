@@ -14,5 +14,6 @@ class RecursosHumanosThreshold extends Model
     protected $fillable = [
         'kpi_name',
         'value',
+        'area'
     ];
 }

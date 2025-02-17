@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SistemasKpi extends Model
+class ContabilidadKpi extends Model
 {
     use HasFactory;
-
-    protected $table = 'sistemas_kpis';
 
     protected $fillable = [
         'threshold_id',
@@ -24,7 +22,7 @@ class SistemasKpi extends Model
 
     public function threshold()
     {
-        return $this->belongsTo(SistemasThreshold::class, 'threshold_id');
+        return $this->belongsTo(ContabilidadThreshold::class, 'threshold_id');
     }
 
     public function getStatusAttribute()

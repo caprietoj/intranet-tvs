@@ -17,7 +17,12 @@ class Kpi extends Model
         'frequency',
         'measurement_date',
         'percentage',
+        'type' // Nuevo campo
     ];
+
+    // Constantes para los tipos de KPI
+    const TYPE_MEASUREMENT = 'measurement';
+    const TYPE_INFORMATIVE = 'informative';
 
     // Relación con el threshold
     public function threshold()
@@ -28,8 +33,36 @@ class Kpi extends Model
     // Accesor para determinar el estado del KPI en función del umbral configurado
     public function getStatusAttribute()
     {
-        // Si existe un threshold, se usa su valor, de lo contrario se asume 80%
-        $threshold_value = $this->threshold ? $this->threshold->value : 80;
-        return ($this->percentage >= $threshold_value) ? 'Alcanzado' : 'No Alcanzado';
+        // Asegurarse de que threshold está cargado
+    if (!$this->relationLoaded('threshold')) {
+        $this->load('threshold');
     }
+    
+    // Obtener el valor del umbral, por defecto 80 si no existe
+    $threshold_value = $this->threshold ? $this->threshold->value : 80;
+    
+    // Comparar el porcentaje con el umbral y retornar el estado
+    return ($this->percentage >= $threshold_value) ? 'Alcanzado' : 'No Alcanzado';
+    }
+
+    // Método para obtener los tipos de KPI disponibles
+    public static function getTypes()
+    {
+        return [
+            self::TYPE_MEASUREMENT => 'Medición',
+            self::TYPE_INFORMATIVE => 'Informativo'
+        ];
+    }
+
+    // Helpers para verificar el tipo
+    public function isMeasurement()
+    {
+        return $this->type === self::TYPE_MEASUREMENT;
+    }
+
+    public function isInformative()
+    {
+        return $this->type === self::TYPE_INFORMATIVE;
+    }
+
 }
