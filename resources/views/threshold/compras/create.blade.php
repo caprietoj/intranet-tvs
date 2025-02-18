@@ -17,10 +17,10 @@
                 <input type="text" name="kpi_name" id="kpi_name" class="form-control" placeholder="Ingrese el nombre del KPI" required>
             </div>
             <div class="form-group">
-                <label for="value">Valor del Threshold (%)</label>
+                <label for="value">Valor del Umbral (%)</label>
                 <input type="number" step="0.01" name="value" id="value" class="form-control" placeholder="Ej. 80" required>
             </div>
-            <button type="submit" class="btn btn-primary">Crear Threshold</button>
+            <button type="submit" class="btn btn-primary">Crear Umbral</button>
         </form>
     </div>
 </div>

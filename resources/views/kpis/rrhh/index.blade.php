@@ -7,6 +7,24 @@
 @stop
 
 @section('content')
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="float-right">
+            <form method="GET" action="{{ route('kpis.rrhh.index') }}" class="form-inline">
+                <label for="month" class="mr-2">Filtrar por Mes:</label>
+                <select name="month" id="month" class="form-control select2bs4" onchange="this.form.submit()">
+                    <option value="">Todos los meses</option>
+                    @for($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                            {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                        </option>
+                    @endfor
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- KPIs de Medición -->
 <div class="card">
     <div class="card-header bg-primary text-white">
@@ -184,6 +202,28 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+.card-header {
+    background-color: #39446D !important;
+    color: white !important;
+}
+.btn-primary {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.btn-primary:hover {
+    background-color: #2c3356;
+    border-color: #2c3356;
+}
+.page-item.active .page-link {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.info-box-icon {
+    background-color: #39446D !important;
+    color: white !important;
+}
+</style>
 @stop
 
 @section('js')

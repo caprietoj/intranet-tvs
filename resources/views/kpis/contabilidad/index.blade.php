@@ -8,15 +8,29 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Month Filter -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <form method="GET" action="{{ route('kpis.contabilidad.index') }}" class="form-inline">
+                    <label for="month" class="mr-2">Filtrar por Mes:</label>
+                    <select name="month" id="month" class="form-control select2bs4" onchange="this.form.submit()">
+                        <option value="">Todos los meses</option>
+                        @for($m = 1; $m <= 12; $m++)
+                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                            </option>
+                        @endfor
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- KPIs de Medición -->
     <div class="card">
         <div class="card-header bg-primary">
             <h3 class="card-title">KPIs de Medición</h3>
-            <div class="card-tools">
-                <a href="{{ route('kpis.contabilidad.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Nuevo KPI
-                </a>
-            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -206,6 +220,33 @@
 
 @section('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+.card-header {
+    background-color: #39446D !important;
+    color: white !important;
+}
+.btn-primary {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.btn-primary:hover {
+    background-color: #2c3356;
+    border-color: #2c3356;
+}
+.page-item.active .page-link {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.info-box-icon {
+    background-color: #39446D !important;
+    color: white !important;
+}
+.select2-container--bootstrap4 .select2-results__option--highlighted {
+    background-color: #39446D !important;
+}
+</style>
 @stop
 
 @section('js')
@@ -213,9 +254,42 @@
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Inicializar Select2
+    $('.select2bs4').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "No se encontraron resultados";
+            }
+        }
+    });
+
+    const meses = {
+        1: 'Enero',
+        2: 'Febrero',
+        3: 'Marzo',
+        4: 'Abril',
+        5: 'Mayo',
+        6: 'Junio',
+        7: 'Julio',
+        8: 'Agosto',
+        9: 'Septiembre',
+        10: 'Octubre',
+        11: 'Noviembre',
+        12: 'Diciembre'
+    };
+
+    $('#month').html(`
+        <option value="">Todos los meses</option>
+        ${Object.entries(meses).map(([num, nombre]) => 
+            `<option value="${num}" ${request('month') == num ? 'selected' : ''}>${nombre}</option>`
+        ).join('')}
+    `);
+
     // Inicializar DataTables
     $('#measurement-kpis-table, #informative-kpis-table').DataTable({
         language: {

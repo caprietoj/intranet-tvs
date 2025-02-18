@@ -18,10 +18,10 @@
                 <input type="text" name="kpi_name" id="kpi_name" class="form-control" value="{{ $threshold->kpi_name }}" required>
             </div>
             <div class="form-group">
-                <label for="value">Valor del Threshold (%)</label>
+                <label for="value">Valor del Umbral (%)</label>
                 <input type="number" step="0.01" name="value" id="value" class="form-control" value="{{ $threshold->value }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar Threshold</button>
+            <button type="submit" class="btn btn-primary">Actualizar Umbral</button>
         </form>
     </div>
 </div>

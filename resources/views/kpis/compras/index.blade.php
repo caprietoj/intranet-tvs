@@ -12,13 +12,29 @@
         <div class="float-right">
             <form method="GET" action="{{ route('kpis.compras.index') }}" class="form-inline">
                 <label for="month" class="mr-2">Filtrar por Mes:</label>
-                <select name="month" id="month" class="form-control select2bs4 mr-2" onchange="this.form.submit()">
+                <select name="month" id="month" class="form-control select2bs4" onchange="this.form.submit()">
                     <option value="">Todos los meses</option>
-                    @for($m = 1; $m <= 12; $m++)
-                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                            {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                    @php
+                        $meses = [
+                            1 => 'Enero',
+                            2 => 'Febrero',
+                            3 => 'Marzo',
+                            4 => 'Abril',
+                            5 => 'Mayo',
+                            6 => 'Junio',
+                            7 => 'Julio',
+                            8 => 'Agosto',
+                            9 => 'Septiembre',
+                            10 => 'Octubre',
+                            11 => 'Noviembre',
+                            12 => 'Diciembre'
+                        ];
+                    @endphp
+                    @foreach($meses as $num => $nombre)
+                        <option value="{{ $num }}" {{ request('month') == $num ? 'selected' : '' }}>
+                            {{ $nombre }}
                         </option>
-                    @endfor
+                    @endforeach
                 </select>
             </form>
         </div>
@@ -52,7 +68,7 @@
                     <td>{{ $kpi->methodology }}</td>
                     <td>{{ $kpi->frequency }}</td>
                     <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
-                    <td>{{ $kpi->percentage }}%</td>
+                    <td>{{ $kpi->percentage }}%</</td>
                     <td>
                         @php
                             $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
@@ -109,7 +125,7 @@
                     <td>{{ $kpi->methodology }}</td>
                     <td>{{ $kpi->frequency }}</td>
                     <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
-                    <td>{{ $kpi->percentage }}%</td>
+                    <td>{{ $kpi->percentage }}%</</td>
                     <td>
                         @php
                             $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
@@ -194,22 +210,30 @@
 @section('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <style>
-    .select2-container--bootstrap4 .select2-selection {
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-    }
-    .select2-container--bootstrap4 .select2-selection--single {
-        height: 38px !important;
-        padding: 0.375rem 0.75rem;
-        line-height: 1.5;
-    }
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
-        padding-left: 0;
-        line-height: 1.5;
-        color: #495057;
-    }
+.card-header {
+    background-color: #39446D !important;
+    color: white !important;
+}
+.btn-primary {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.btn-primary:hover {
+    background-color: #2c3356;
+    border-color: #2c3356;
+}
+.page-item.active .page-link {
+    background-color: #39446D;
+    border-color: #39446D;
+}
+.info-box-icon {
+    background-color: #39446D !important;
+    color: white !important;
+}
+.select2-container--bootstrap4 .select2-results__option--highlighted {
+    background-color: #39446D !important;
+}
 </style>
 @stop
 
@@ -232,7 +256,12 @@ $(document).ready(function() {
     // Inicializar Select2
     $('.select2bs4').select2({
         theme: 'bootstrap4',
-        width: '100%'
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "No se encontraron resultados";
+            }
+        }
     });
 
     // Configuración del gráfico
