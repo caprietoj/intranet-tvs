@@ -3,11 +3,11 @@
 @section('title', 'Editar Ticket')
 
 @section('content_header')
-    <h1>Editar Ticket</h1>
+    <h1 class="text-primary">Editar Ticket #{{ $ticket->id }}</h1>
 @stop
 
 @section('content')
-<div class="card">
+<div class="card custom-card">
     <div class="card-body">
         <form id="editTicketForm">
             @csrf
@@ -64,6 +64,57 @@
         </form>
     </div>
 </div>
+@stop
+
+@section('css')
+<style>
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+    }
+
+    .text-primary { color: var(--primary) !important; }
+
+    .custom-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .form-control {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: #2a3d5d;
+        border-color: #2a3d5d;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn i {
+        margin-right: 0.5rem;
+    }
+
+    select.form-control {
+        padding: 0.375rem 0.75rem;
+        background-position: right 0.75rem center;
+    }
+</style>
 @stop
 
 @section('js')

@@ -381,152 +381,143 @@ return [
             'submenu' => [
                 [
                     'text'    => 'Enfermería',
+                    'icon'    => 'fas fa-heartbeat',
                     'submenu' => [
                         [
                             'text' => 'Crear KPI',
                             'url'  => 'enfermeria/kpis/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-plus-square',
                             'can' => 'kpis.enfermeria.create',
                         ],
                         [
                             'text' => 'Ver KPI',
                             'url'  => 'enfermeria/kpis',
-                            'icon' => '',
+                            'icon' => 'fas fa-chart-bar',
                             'can' => 'kpis.enfermeria.index',
                         ],
                         [
                             'text' => 'Configurar Umbral',
                             'url'  => 'enfermeria/umbral/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.enfermeria.create',
                         ],
                         [
                             'text' => 'Umbrales Configurados',
                             'url'  => 'enfermeria/umbral/show',
-                            'icon' => '',
+                            'icon' => 'fas fa-list-alt',
                             'can' => 'umbral.enfermeria.show',
                         ],
                     ],
                 ],
                 [
                     'text'    => 'Compras',
+                    'icon'    => 'fas fa-shopping-cart',
                     'submenu' => [
                         [
                             'text' => 'Crear KPI',
                             'url'  => 'compras/kpis/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-plus-square',
                             'can' => 'kpis.compras.create',
                         ],
                         [
                             'text' => 'Ver KPI',
                             'url'  => 'compras/kpis',
-                            'icon' => '',
+                            'icon' => 'fas fa-chart-bar',
                             'can' => 'kpis.compras.index',
                         ],
                         [
                             'text' => 'Configuración del Umbral',
                             'url'  => 'compras/umbral/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.compras.create',
                         ],
                         [
                             'text' => 'Ver Umbral',
                             'url'  => 'compras/umbral/show',
-                            'icon' => '',
+                            'icon' => 'fas fa-list-alt',
                             'can' => 'umbral.compras.show',
                         ],
                     ],
                 ],
                 [
                     'text'    => 'Recursos Humanos',
+                    'icon'    => 'fas fa-users',
                     'submenu' => [
                         [
                             'text' => 'Crear KPI',
                             'url'  => 'rrhh/kpis/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-plus-square',
                             'can' => 'kpis.recursoshumanos.create',
                         ],
                         [
                             'text' => 'Ver KPI',
                             'url'  => 'rrhh/kpis',
-                            'icon' => '',
+                            'icon' => 'fas fa-chart-bar',
                             'can' => 'kpis.recursoshumanos.index',
                         ],
                         [
                             'text' => 'Crear Umbral',
                             'url'  => 'rrhh/umbral/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.recursoshumanos.create',
                         ],
                         [
                             'text' => 'Ver Umbral',
                             'url'  => 'rrhh/umbral/show',
-                            'icon' => '',
+                            'icon' => 'fas fa-list-alt',
                             'can' => 'umbral.recursoshumanos.show',
                         ],
                     ],
                 ],
                 [
                     'text'    => 'Sistemas',
+                    'icon'    => 'fas fa-laptop-code',
                     'submenu' => [
                         [
                             'text' => 'Crear KPI',
                             'url'  => 'sistemas/kpis/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-plus-square',
                             'can' => 'kpis.sistemas.create',
                         ],
                         [
                             'text' => 'Ver KPI',
                             'url'  => 'sistemas/kpis',
-                            'icon' => '',
+                            'icon' => 'fas fa-chart-bar',
                             'can' => 'kpis.sistemas.index',
                         ],
                         [
                             'text' => 'Crear Umbral',
                             'url'  => 'sistemas/umbral/create',
-                            'icon' => '',
+                            'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.sistemas.create',
                         ],
                         [
                             'text' => 'Ver Umbral',
                             'url'  => 'sistemas/umbral/index',
-                            'icon' => '',
+                            'icon' => 'fas fa-list-alt',
                             'can' => 'umbral.sistemas.index',
                         ],
 
                     ],
 
                 ],
-
                 [
                     'text'    => 'Contabilidad',
+                    'icon'    => 'fas fa-calculator',
                     'submenu' => [
                         [
-                            'text' => 'Crear KPI',
-                            'url'  => 'contabilidad/kpis/create',
-                            'icon' => '',
-                            'can' => 'kpis.contabilidad.create',
+                            'text' => 'Ejecución Presupuestal',
+                            'url'  => 'contabilidad/budget',
+                            'icon' => 'fas fa-money-bill',
                         ],
                         [
-                            'text' => 'Ver KPI',
-                            'url'  => 'contabilidad/kpis',
-                            'icon' => '',
-                            'can' => 'kpis.contabilidad.index',
-                        ],
-                        [
-                            'text' => 'Crear Umbral',
-                            'url'  => 'threshold/contabilidad/create',
-                            'icon' => '',
-                            'can' => 'umbral.contabilidad.create',
-                        ],
-                        [
-                            'text' => 'Ver Umbral',
-                            'url'  => 'threshold/contabilidad/show',
-                            'icon' => '',
-                            'can' => 'umbral.contabilidad.show',
+                            'text' => 'Registrar Presupuesto',
+                            'url'  => 'contabilidad/budget/create',
+                            'icon' => 'fas fa-plus-circle',
                         ],
                     ],
                 ],
+
             ],
         ],
 
@@ -613,7 +604,23 @@ return [
                     'icon' => 'fas fa-upload',
                 ],
             ],
-         ]
+         ],
+        [
+            'text' => 'Avisos Importantes',
+            'icon' => 'fas fa-bullhorn',
+            'submenu' => [
+                [
+                    'text' => 'Crear Aviso',
+                    'url'  => 'announcements/create',
+                    'icon' => 'fas fa-plus',
+                ],
+                [
+                    'text' => 'Gestionar Avisos',
+                    'url'  => 'announcements',
+                    'icon' => 'fas fa-list',
+                ],
+            ],
+        ],
     ],
 
     /*
@@ -718,6 +725,21 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        'Summernote' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css',
                 ],
             ],
         ],

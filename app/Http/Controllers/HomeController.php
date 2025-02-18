@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -15,7 +16,17 @@ class HomeController extends Controller
 
     public function index()
     {
-        return view('welcome');
+        $announcements = Announcement::query()
+            ->where('is_active', true)
+            ->where(function($query) {
+                $query->whereDate('expiry_date', '>=', now())
+                      ->orWhereNull('expiry_date');
+            })
+            ->orderBy('priority', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('welcome', compact('announcements'));
     }
 
     public function dashboard()
