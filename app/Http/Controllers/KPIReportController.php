@@ -11,184 +11,75 @@ use App\Models\Threshold;
 use App\Models\ComprasThreshold;
 use App\Models\RecursosHumanosThreshold;
 use App\Models\SistemasThreshold;
-use PDF; // Asegúrate de haber instalado barryvdh/laravel-dompdf
 
 class KPIReportController extends Controller
 {
-    public function downloadReport()
+    public function index()
     {
-        // Fetch KPI records
-        $kpis = Kpi::all();
-        $comprasKpis = ComprasKpi::all();
-        $recursosKpi = RecursosHumanosKpi::all();
-        $sistemasKpi = SistemasKpi::all();
+        try {
+            // Fetch KPI records with error handling
+            $kpis = Kpi::all() ?? collect([]);
+            $comprasKpis = ComprasKpi::all() ?? collect([]);
+            $recursosKpi = RecursosHumanosKpi::all() ?? collect([]);
+            $sistemasKpi = SistemasKpi::all() ?? collect([]);
 
-        // Fetch thresholds for each category
-        $enfermeriaThresholds = Threshold::all();
-        $comprasThresholds = ComprasThreshold::all();
-        $rrhhThresholds = RecursosHumanosThreshold::all();
-        $sistemasThresholds = SistemasThreshold::all();
+            // Fetch thresholds with error handling
+            $enfermeriaThresholds = Threshold::all() ?? collect([]);
+            $comprasThresholds = ComprasThreshold::all() ?? collect([]);
+            $rrhhThresholds = RecursosHumanosThreshold::all() ?? collect([]);
+            $sistemasThresholds = SistemasThreshold::all() ?? collect([]);
 
-        // Compute analysis (averages as a simple statistical summary)
-        $enfermeriaAnalysis = [
-            'avg_percentage' => $kpis->avg('percentage'),
-            'avg_threshold'  => $enfermeriaThresholds->avg('value'),
-            'difference'     => $kpis->avg('percentage') - $enfermeriaThresholds->avg('value'),
-            'status'         => ($kpis->avg('percentage') < $enfermeriaThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $comprasAnalysis = [
-            'avg_percentage' => $comprasKpis->avg('percentage'),
-            'avg_threshold'  => $comprasThresholds->avg('value'),
-            'difference'     => $comprasKpis->avg('percentage') - $comprasThresholds->avg('value'),
-            'status'         => ($comprasKpis->avg('percentage') < $comprasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $rrhhAnalysis = [
-            'avg_percentage' => $recursosKpi->avg('percentage'),
-            'avg_threshold'  => $rrhhThresholds->avg('value'),
-            'difference'     => $recursosKpi->avg('percentage') - $rrhhThresholds->avg('value'),
-            'status'         => ($recursosKpi->avg('percentage') < $rrhhThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $sistemasAnalysis = [
-            'avg_percentage' => $sistemasKpi->avg('percentage'),
-            'avg_threshold'  => $sistemasThresholds->avg('value'),
-            'difference'     => $sistemasKpi->avg('percentage') - $sistemasThresholds->avg('value'),
-            'status'         => ($sistemasKpi->avg('percentage') < $sistemasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
+            // Compute analysis with safe calculations
+            $enfermeriaAnalysis = [
+                'avg_percentage' => $kpis->avg('percentage') ?? 0,
+                'avg_threshold' => $enfermeriaThresholds->avg('value') ?? 0,
+                'difference' => ($kpis->avg('percentage') ?? 0) - ($enfermeriaThresholds->avg('value') ?? 0),
+                'status' => ($kpis->avg('percentage') ?? 0) < ($enfermeriaThresholds->avg('value') ?? 0)
+                    ? 'No se alcanzó el umbral esperado'
+                    : 'Umbral alcanzado'
+            ];
 
-        // Pass all data to the view
-        return view('reports.kpi_report', compact(
-            'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',
-            'enfermeriaThresholds', 'comprasThresholds', 'rrhhThresholds', 'sistemasThresholds',
-            'enfermeriaAnalysis', 'comprasAnalysis', 'rrhhAnalysis', 'sistemasAnalysis'
-        ));
-    }
+            $comprasAnalysis = [
+                'avg_percentage' => $comprasKpis->avg('percentage') ?? 0,
+                'avg_threshold' => $comprasThresholds->avg('value') ?? 0,
+                'difference' => ($comprasKpis->avg('percentage') ?? 0) - ($comprasThresholds->avg('value') ?? 0),
+                'status' => ($comprasKpis->avg('percentage') ?? 0) < ($comprasThresholds->avg('value') ?? 0)
+                    ? 'No se alcanzó el umbral esperado'
+                    : 'Umbral alcanzado'
+            ];
 
-    /**
-     * Descarga el reporte en formato PDF.
-     */
-    public function downloadPDF()
-    {
-        // Reutilizar los mismos datos que en downloadReport()
-        $kpis = Kpi::all();
-        $comprasKpis = ComprasKpi::all();
-        $recursosKpi = RecursosHumanosKpi::all();
-        $sistemasKpi = SistemasKpi::all();
+            $rrhhAnalysis = [
+                'avg_percentage' => $recursosKpi->avg('percentage') ?? 0,
+                'avg_threshold' => $rrhhThresholds->avg('value') ?? 0,
+                'difference' => ($recursosKpi->avg('percentage') ?? 0) - ($rrhhThresholds->avg('value') ?? 0),
+                'status' => ($recursosKpi->avg('percentage') ?? 0) < ($rrhhThresholds->avg('value') ?? 0)
+                    ? 'No se alcanzó el umbral esperado'
+                    : 'Umbral alcanzado'
+            ];
 
-        $enfermeriaThresholds = Threshold::all();
-        $comprasThresholds = ComprasThreshold::all();
-        $rrhhThresholds = RecursosHumanosThreshold::all();
-        $sistemasThresholds = SistemasThreshold::all();
+            $sistemasAnalysis = [
+                'avg_percentage' => $sistemasKpi->avg('percentage') ?? 0,
+                'avg_threshold' => $sistemasThresholds->avg('value') ?? 0,
+                'difference' => ($sistemasKpi->avg('percentage') ?? 0) - ($sistemasThresholds->avg('value') ?? 0),
+                'status' => ($sistemasKpi->avg('percentage') ?? 0) < ($sistemasThresholds->avg('value') ?? 0)
+                    ? 'No se alcanzó el umbral esperado'
+                    : 'Umbral alcanzado'
+            ];
 
-        $enfermeriaAnalysis = [
-            'avg_percentage' => $kpis->avg('percentage'),
-            'avg_threshold'  => $enfermeriaThresholds->avg('value'),
-            'difference'     => $kpis->avg('percentage') - $enfermeriaThresholds->avg('value'),
-            'status'         => ($kpis->avg('percentage') < $enfermeriaThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $comprasAnalysis = [
-            'avg_percentage' => $comprasKpis->avg('percentage'),
-            'avg_threshold'  => $comprasThresholds->avg('value'),
-            'difference'     => $comprasKpis->avg('percentage') - $comprasThresholds->avg('value'),
-            'status'         => ($comprasKpis->avg('percentage') < $comprasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $rrhhAnalysis = [
-            'avg_percentage' => $recursosKpi->avg('percentage'),
-            'avg_threshold'  => $rrhhThresholds->avg('value'),
-            'difference'     => $recursosKpi->avg('percentage') - $rrhhThresholds->avg('value'),
-            'status'         => ($recursosKpi->avg('percentage') < $rrhhThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $sistemasAnalysis = [
-            'avg_percentage' => $sistemasKpi->avg('percentage'),
-            'avg_threshold'  => $sistemasThresholds->avg('value'),
-            'difference'     => $sistemasKpi->avg('percentage') - $sistemasThresholds->avg('value'),
-            'status'         => ($sistemasKpi->avg('percentage') < $sistemasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
+            return view('reports.kpi_report', compact(
+                'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',
+                'enfermeriaThresholds', 'comprasThresholds', 'rrhhThresholds', 'sistemasThresholds',
+                'enfermeriaAnalysis', 'comprasAnalysis', 'rrhhAnalysis', 'sistemasAnalysis'
+            ));
 
-        $data = compact(
-            'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',
-            'enfermeriaThresholds', 'comprasThresholds', 'rrhhThresholds', 'sistemasThresholds',
-            'enfermeriaAnalysis', 'comprasAnalysis', 'rrhhAnalysis', 'sistemasAnalysis'
-        );
-
-        // Generar el PDF a partir de la vista
-        $pdf = PDF::loadView('reports.kpi_report', $data);
-        return $pdf->download('kpi_report.pdf');
-    }
-
-    /**
-     * Descarga el reporte en formato HTML.
-     */
-    public function downloadHTML()
-    {
-        // Reutilizamos la misma lógica para obtener los datos
-        $kpis = Kpi::all();
-        $comprasKpis = ComprasKpi::all();
-        $recursosKpi = RecursosHumanosKpi::all();
-        $sistemasKpi = SistemasKpi::all();
-
-        $enfermeriaThresholds = Threshold::all();
-        $comprasThresholds = ComprasThreshold::all();
-        $rrhhThresholds = RecursosHumanosThreshold::all();
-        $sistemasThresholds = SistemasThreshold::all();
-
-        $enfermeriaAnalysis = [
-            'avg_percentage' => $kpis->avg('percentage'),
-            'avg_threshold'  => $enfermeriaThresholds->avg('value'),
-            'difference'     => $kpis->avg('percentage') - $enfermeriaThresholds->avg('value'),
-            'status'         => ($kpis->avg('percentage') < $enfermeriaThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $comprasAnalysis = [
-            'avg_percentage' => $comprasKpis->avg('percentage'),
-            'avg_threshold'  => $comprasThresholds->avg('value'),
-            'difference'     => $comprasKpis->avg('percentage') - $comprasThresholds->avg('value'),
-            'status'         => ($comprasKpis->avg('percentage') < $comprasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $rrhhAnalysis = [
-            'avg_percentage' => $recursosKpi->avg('percentage'),
-            'avg_threshold'  => $rrhhThresholds->avg('value'),
-            'difference'     => $recursosKpi->avg('percentage') - $rrhhThresholds->avg('value'),
-            'status'         => ($recursosKpi->avg('percentage') < $rrhhThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-        $sistemasAnalysis = [
-            'avg_percentage' => $sistemasKpi->avg('percentage'),
-            'avg_threshold'  => $sistemasThresholds->avg('value'),
-            'difference'     => $sistemasKpi->avg('percentage') - $sistemasThresholds->avg('value'),
-            'status'         => ($sistemasKpi->avg('percentage') < $sistemasThresholds->avg('value'))
-                                ? 'No se alcanzó el umbral esperado'
-                                : 'Umbral alcanzado'
-        ];
-
-        $data = compact(
-            'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',
-            'enfermeriaThresholds', 'comprasThresholds', 'rrhhThresholds', 'sistemasThresholds',
-            'enfermeriaAnalysis', 'comprasAnalysis', 'rrhhAnalysis', 'sistemasAnalysis'
-        );
-
-        $html = view('reports.kpi_report', $data)->render();
-        return response($html)
-            ->header('Content-Type', 'text/html')
-            ->header('Content-Disposition', 'attachment; filename="kpi_report.html"');
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error en KPIReportController: ' . $e->getMessage());
+            
+            // Return a view with error message
+            return view('reports.kpi_report', [
+                'error' => 'Hubo un error al procesar los datos. Por favor, inténtelo de nuevo.'
+            ]);
+        }
     }
 }

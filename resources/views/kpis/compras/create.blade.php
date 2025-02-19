@@ -1,13 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Nuevo KPI Compras')
+@section('title', 'Nuevo KPI - Compras')
 
 @section('content_header')
-    <h1 class="text-primary">Nuevo KPI - Compras</h1>
+    <h1>Registrar KPI - Compras</h1>
 @stop
 
 @section('content')
-<div class="card custom-card">
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title">Formulario de Registro de KPI</h3>
+    </div>
     <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show">
@@ -52,11 +55,11 @@
                         <label for="threshold_id" class="form-label">
                             Nombre del KPI <span class="text-danger">*</span>
                         </label>
-                        <select name="threshold_id" id="threshold_id" class="form-control select2bs4" required>
-                            <option value="">Seleccione un KPI</option>
+                        <select name="threshold_id" id="threshold_id" class="form-control @error('threshold_id') is-invalid @enderror" required>
+                            <option value="">Seleccione un umbral</option>
                             @foreach($thresholds as $threshold)
-                                <option value="{{ $threshold->id }}">
-                                    {{ $threshold->kpi_name }} (Umbral: {{ $threshold->value }}%)
+                                <option value="{{ $threshold->id }}" {{ old('threshold_id') == $threshold->id ? 'selected' : '' }}>
+                                    {{ $threshold->kpi_name }} ({{ $threshold->value }}%)
                                 </option>
                             @endforeach
                         </select>
@@ -129,57 +132,6 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <style>
-    :root {
-        --primary: #364E76;
-        --accent: #ED3236;
-    }
-
-    .text-primary {
-        color: var(--primary) !important;
-        font-weight: 600;
-    }
-
-    .custom-card {
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-        color: #495057;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control {
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #2a3d5d;
-        transform: translateY(-2px);
-    }
-
     .select2-container--bootstrap4 .select2-selection {
         border: 1px solid #ced4da;
         border-radius: 0.25rem;

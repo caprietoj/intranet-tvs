@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Kpi extends Model
 {
     use HasFactory;
+    
+    protected $table = 'kpis';
 
     protected $fillable = [
         'threshold_id',

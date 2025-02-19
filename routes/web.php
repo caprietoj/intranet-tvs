@@ -187,7 +187,7 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para el reporte de KPIs
     Route::group(['prefix' => 'admin'], function () {
-    Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
+        Route::get('/kpis/report', [KPIReportController::class, 'index'])->name('kpi.report');
     });
 
     // Rutas para el controlador de asistencias

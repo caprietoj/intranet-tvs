@@ -18,7 +18,7 @@ class KpiComprasController extends Controller
     public function indexCompras(Request $request)
     {
         $month = $request->input('month');
-        $query = ComprasKpi::with('threshold')->where('area', 'compras');
+        $query = ComprasKpi::with('threshold');
         
         if ($month) {
             $query->whereMonth('measurement_date', $month);
@@ -116,38 +116,55 @@ class KpiComprasController extends Controller
 
     public function storeCompras(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'threshold_id' => 'required|exists:thresholds,id',
-            'type' => 'required|in:measurement,informative',
-            'methodology' => 'required|string',
-            'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
-            'measurement_date' => 'required|date',
-            'percentage' => 'required|numeric|min:0|max:100',
-        ]);
+        try {
+            DB::beginTransaction();
 
-        if ($validator->fails()) {
+            // Debug de los datos recibidos
+            \Log::info('Datos recibidos:', $request->all());
+            
+            // Verifica si el threshold existe antes de la validación
+            $threshold = ComprasThreshold::find($request->threshold_id);
+            if (!$threshold) {
+                throw new \Exception('El umbral seleccionado no existe.');
+            }
+
+            \Log::info('Threshold encontrado:', $threshold->toArray());
+
+            $validated = $request->validate([
+                'threshold_id' => 'required|exists:compras_thresholds,id',
+                'type' => 'required|in:measurement,informative',
+                'methodology' => 'required|string',
+                'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
+                'measurement_date' => 'required|date',
+                'percentage' => 'required|numeric|min:0|max:100',
+            ]);
+
+            $kpi = ComprasKpi::create([
+                'threshold_id' => $threshold->id,
+                'name' => $threshold->kpi_name,
+                'type' => $validated['type'],
+                'methodology' => $validated['methodology'],
+                'frequency' => $validated['frequency'],
+                'measurement_date' => $validated['measurement_date'],
+                'percentage' => $validated['percentage']
+            ]);
+
+            \Log::info('KPI creado:', $kpi->toArray());
+
+            DB::commit();
             return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
+                ->route('kpis.compras.index')
+                ->with('success', 'KPI registrado exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al guardar KPI: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Error al guardar el KPI: ' . $e->getMessage());
         }
-
-        $threshold = ComprasThreshold::findOrFail($request->threshold_id);
-        
-        ComprasKpi::create([
-            'threshold_id' => $threshold->id,
-            'name' => $threshold->kpi_name,
-            'type' => $request->type,
-            'area' => 'compras',
-            'methodology' => $request->methodology,
-            'frequency' => $request->frequency,
-            'measurement_date' => $request->measurement_date,
-            'percentage' => $request->percentage,
-        ]);
-
-        return redirect()
-            ->route('kpis.compras.index')
-            ->with('success', 'KPI registrado exitosamente.');
     }
 
     public function showCompras($id)
