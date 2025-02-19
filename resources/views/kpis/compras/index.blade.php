@@ -1,9 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'KPIs de Compras')
+@section('title', 'KPIs Compras')
 
 @section('content_header')
-    <h1>Gestión de KPIs - Área de Compras</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="text-primary">KPIs - Compras</h1>
+        <a href="{{ route('kpis.compras.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Nuevo KPI
+        </a>
+    </div>
 @stop
 
 @section('content')
@@ -42,121 +47,125 @@
 </div>
 
 <!-- KPIs de Medición -->
-<div class="card">
+<div class="card custom-card">
     <div class="card-header bg-primary">
         <h3 class="card-title text-white">KPIs de Medición</h3>
     </div>
     <div class="card-body">
-        <table id="measurementKpiTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre del KPI</th>
-                    <th>Metodología</th>
-                    <th>Frecuencia</th>
-                    <th>Fecha de Medición</th>
-                    <th>Porcentaje</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($kpis->where('type', 'measurement') as $kpi)
-                <tr>
-                    <td>{{ $kpi->id }}</td>
-                    <td>{{ $kpi->threshold->kpi_name }}</td>
-                    <td>{{ $kpi->methodology }}</td>
-                    <td>{{ $kpi->frequency }}</td>
-                    <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
-                    <td>{{ $kpi->percentage }}%</</td>
-                    <td>
-                        @php
-                            $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
-                            $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
-                        @endphp
-                        <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
-                            {{ $status }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="measurementKpiTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del KPI</th>
+                        <th>Metodología</th>
+                        <th>Frecuencia</th>
+                        <th>Fecha de Medición</th>
+                        <th>Porcentaje</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($kpis->where('type', 'measurement') as $kpi)
+                    <tr>
+                        <td>{{ $kpi->id }}</td>
+                        <td>{{ $kpi->threshold->kpi_name }}</td>
+                        <td>{{ $kpi->methodology }}</td>
+                        <td>{{ $kpi->frequency }}</td>
+                        <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
+                        <td>{{ $kpi->percentage }}%</</td>
+                        <td>
+                            @php
+                                $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
+                                $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
+                            @endphp
+                            <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- KPIs Informativos -->
-<div class="card mt-4">
+<div class="card custom-card mt-4">
     <div class="card-header bg-info">
         <h3 class="card-title text-white">KPIs Informativos</h3>
     </div>
     <div class="card-body">
-        <table id="informativeKpiTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre del KPI</th>
-                    <th>Metodología</th>
-                    <th>Frecuencia</th>
-                    <th>Fecha de Medición</th>
-                    <th>Porcentaje</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($kpis->where('type', 'informative') as $kpi)
-                <tr>
-                    <td>{{ $kpi->id }}</td>
-                    <td>{{ $kpi->threshold->kpi_name }}</td>
-                    <td>{{ $kpi->methodology }}</td>
-                    <td>{{ $kpi->frequency }}</td>
-                    <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
-                    <td>{{ $kpi->percentage }}%</</td>
-                    <td>
-                        @php
-                            $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
-                            $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
-                        @endphp
-                        <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
-                            {{ $status }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="informativeKpiTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del KPI</th>
+                        <th>Metodología</th>
+                        <th>Frecuencia</th>
+                        <th>Fecha de Medición</th>
+                        <th>Porcentaje</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($kpis->where('type', 'informative') as $kpi)
+                    <tr>
+                        <td>{{ $kpi->id }}</td>
+                        <td>{{ $kpi->threshold->kpi_name }}</td>
+                        <td>{{ $kpi->methodology }}</td>
+                        <td>{{ $kpi->frequency }}</td>
+                        <td>{{ \Carbon\Carbon::parse($kpi->measurement_date)->format('d/m/Y') }}</td>
+                        <td>{{ $kpi->percentage }}%</</td>
+                        <td>
+                            @php
+                                $thresholdValue = $kpi->threshold ? $kpi->threshold->value : 80;
+                                $status = $kpi->percentage >= $thresholdValue ? 'Alcanzado' : 'No Alcanzado';
+                            @endphp
+                            <span class="badge {{ $status == 'Alcanzado' ? 'badge-success' : 'badge-danger' }}">
+                                {{ $status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ route('kpis.compras.show', $kpi->id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('kpis.compras.edit', $kpi->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger delete-kpi" data-id="{{ $kpi->id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Análisis Estadístico -->
-<div class="card mt-4">
+<div class="card custom-card mt-4">
     <div class="card-header bg-success">
         <h3 class="card-title text-white">Análisis Estadístico</h3>
     </div>
@@ -211,29 +220,72 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-.card-header {
-    background-color: #39446D !important;
-    color: white !important;
-}
-.btn-primary {
-    background-color: #39446D;
-    border-color: #39446D;
-}
-.btn-primary:hover {
-    background-color: #2c3356;
-    border-color: #2c3356;
-}
-.page-item.active .page-link {
-    background-color: #39446D;
-    border-color: #39446D;
-}
-.info-box-icon {
-    background-color: #39446D !important;
-    color: white !important;
-}
-.select2-container--bootstrap4 .select2-results__option--highlighted {
-    background-color: #39446D !important;
-}
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+        --success: #28a745;
+        --warning: #ffc107;
+    }
+
+    .text-primary { 
+        color: var(--primary) !important;
+        font-weight: 600;
+    }
+
+    .custom-card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #2a3d5d;
+        border-color: #2a3d5d;
+        transform: translateY(-2px);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 500;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 0.75rem 1rem;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 0.85em;
+        border-radius: 4px;
+    }
+
+    .badge-success { background-color: var(--success); }
+    .badge-danger { background-color: var(--accent); }
+    .badge-warning { background-color: var(--warning); }
+
+    /* DataTables Customization */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
 </style>
 @stop
 

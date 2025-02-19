@@ -1,16 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'Gestionar Inventario')
+@section('title', 'Gestión de Equipos')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>Gestionar Inventario</h1>
-        <form action="{{ route('equipment.reset') }}" method="POST" class="d-inline" id="resetForm">
-            @csrf
-            <button type="submit" class="btn btn-warning" id="resetInventory">
-                <i class="fas fa-sync"></i> Reiniciar Inventario
-            </button>
-        </form>
+        <h1 class="text-primary">Gestión de Equipos</h1>
+        <div>
+            @can('equipment.manage')
+                <form action="{{ route('equipment.reset') }}" method="POST" class="d-inline" id="resetForm">
+                    @csrf
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-sync-alt"></i> Reiniciar Inventario
+                    </button>
+                </form>
+            @endcan
+        </div>
     </div>
 @stop
 
@@ -112,44 +116,165 @@
 
 @section('css')
 <style>
-.info-box {
-    min-height: 120px;
-    transition: all 0.3s ease;
-    margin-bottom: 0;
-}
-.info-box:hover {
-    transform: translateY(-5px);
-}
-.info-box-icon {
-    width: 80px;
-    height: 80px;
-    font-size: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-}
-.info-box-text {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-}
-.progress-description {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-}
-.progress {
-    height: 15px;
-    border-radius: 10px;
-}
-.progress-bar {
-    background-color: rgba(255,255,255,0.7);
-}
-.card {
-    transition: all 0.3s ease;
-}
-.card:hover {
-    transform: translateY(-5px);
-}
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+        --success: #28a745;
+        --warning: #ffc107;
+    }
+
+    /* Headers and Text */
+    .text-primary { color: var(--primary) !important; }
+    h1 { font-weight: 600; }
+
+    /* Card Styles */
+    .card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+        background-color: var(--primary);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        padding: 1rem 1.5rem;
+    }
+
+    /* Table Styles */
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 500;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        padding: 0.75rem 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(54, 78, 118, 0.05);
+    }
+
+    /* Button Styles */
+    .btn {
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: #2a3d5d;
+        border-color: #2a3d5d;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning {
+        background-color: var(--warning);
+        border-color: var(--warning);
+        color: #000;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #e0a800;
+        transform: translateY(-2px);
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        background-color: var(--primary);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+    }
+
+    .modal-header .close {
+        color: white;
+        opacity: 0.8;
+    }
+
+    .modal-header .close:hover {
+        opacity: 1;
+    }
+
+    /* Form Controls */
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+    }
+
+    /* Status Badges */
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 0.85em;
+        font-weight: 500;
+        border-radius: 4px;
+    }
+
+    .badge-success {
+        background-color: var(--success);
+    }
+
+    .badge-danger {
+        background-color: var(--accent);
+    }
+
+    .badge-warning {
+        background-color: var(--warning);
+        color: #000;
+    }
+
+    /* DataTables Customization */
+    .dataTables_wrapper .dataTables_length select,
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 4px 8px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--primary) !important;
+        color: white !important;
+        border: 1px solid var(--primary) !important;
+        border-radius: 4px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #2a3d5d !important;
+        color: white !important;
+        border: 1px solid #2a3d5d !important;
+    }
 </style>
 @stop
 

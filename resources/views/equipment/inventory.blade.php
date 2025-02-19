@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Inventario Inicial de Equipos')
+@section('title', 'Inventario Inicial')
 
 @section('content_header')
-    <h1>Inventario Inicial de Equipos</h1>
+    <h1 class="text-primary mb-4">Inventario Inicial de Equipos</h1>
 @stop
 
 @section('content')
@@ -158,49 +158,156 @@
 
 @section('css')
 <style>
-.info-box {
-    min-height: 120px;
-    padding: 1.5rem;
-    margin-bottom: 0;
-    transition: all 0.3s ease;
-}
-.info-box:hover {
-    transform: translateY(-5px);
-}
-.info-box-icon {
-    font-size: 3rem;
-    margin-right: 1.5rem;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.info-box-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-top: 0.5rem;
-}
-.info-box-text {
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.card {
-    transition: all 0.3s ease;
-}
-.card:hover {
-    transform: translateY(-5px);
-}
-.form-group {
-    margin-bottom: 2rem;
-}
-.input-group .form-control {
-    height: calc(2.5rem + 2px);
-}
-.btn {
-    padding: 0.5rem 1.5rem;
-}
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+        --success: #28a745;
+        --info: #17a2b8;
+    }
+
+    .text-primary { color: var(--primary) !important; }
+
+    .card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-outline {
+        border-top: 3px solid var(--primary);
+    }
+
+    .card-primary.card-outline {
+        border-top-color: var(--primary);
+    }
+
+    .card-success.card-outline {
+        border-top-color: var(--success);
+    }
+
+    .info-box {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-height: 120px;
+        background: white;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, var(--primary), #4a6491);
+        color: white;
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(45deg, var(--info), #2dcee3);
+        color: white;
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(45deg, var(--success), #34ce57);
+        color: white;
+    }
+
+    .info-box-icon {
+        font-size: 2.5rem;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        margin-right: 1rem;
+    }
+
+    .info-box-content {
+        padding: 1rem;
+    }
+
+    .info-box-number {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .info-box-text {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 0.5rem 1rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+    }
+
+    .input-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-group-append .btn {
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: #2a3d5d;
+        border-color: #2a3d5d;
+    }
+
+    .btn-info {
+        background-color: var(--info);
+        border-color: var(--info);
+    }
+
+    .btn-success {
+        background-color: var(--success);
+        border-color: var(--success);
+    }
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(0,0,0,0.125);
+        padding: 1.25rem;
+    }
+
+    .card-header .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .card-header i {
+        margin-right: 0.5rem;
+        color: var(--primary);
+    }
+
+    label.font-weight-bold {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
 </style>
 @stop
 

@@ -167,14 +167,70 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <style>
-    .badge {
-        font-size: 0.9em;
-        padding: 0.5em 0.75em;
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+        --success: #28a745;
+        --warning: #ffc107;
+        --info: #17a2b8;
     }
+
     .card {
-        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+        background-color: var(--primary);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        padding: 1rem 1.5rem;
+    }
+
+    .table thead th {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .badge-success { background-color: var(--success); }
+    .badge-danger { background-color: var(--accent); }
+
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .alert {
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+
+    /* DataTables customization */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
     }
 </style>
 @stop

@@ -1,16 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar KPI - Compras')
+@section('title', 'Editar KPI Compras')
 
 @section('content_header')
-    <h1>Editar KPI - Compras</h1>
+    <h1 class="text-primary">Editar KPI - Compras</h1>
 @stop
 
 @section('content')
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h3 class="card-title">Formulario de Edición de KPI</h3>
-    </div>
+<div class="card custom-card">
     <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show">
@@ -132,39 +129,130 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <style>
-    .select2-container--bootstrap4 .select2-selection {
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
     }
-    .select2-container--bootstrap4 .select2-selection--single {
-        height: 38px !important;
-        padding: 0.375rem 0.75rem;
+
+    /* General Styles */
+    .text-primary {
+        color: var(--primary) !important;
+        font-weight: 600;
+    }
+
+    .custom-card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #495057;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        height: auto;
+        min-height: 45px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
         line-height: 1.5;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        transition: all 0.3s ease;
     }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+    }
+
+    /* Select2 Customization */
+    .select2-container--bootstrap4 .select2-selection {
+        height: auto !important;
+        min-height: 45px;
+        padding: 0.5rem;
+    }
+
     .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
-        padding-left: 0;
+        padding: 0;
         line-height: 1.5;
         color: #495057;
     }
+
     .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
-        height: 36px;
-        right: 5px;
+        height: 100%;
     }
+
     .select2-container--bootstrap4.select2-container--focus .select2-selection {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
     }
-    .select2-container--bootstrap4 .select2-dropdown {
-        border-color: #80bdff;
+
+    /* Input Types Specific */
+    input[type="date"].form-control {
+        padding: 0.5rem 1rem;
     }
-    .form-label {
-        font-weight: 600;
-        color: #34395e;
-        font-size: 0.875rem;
-        margin-bottom: 0.5rem;
+
+    input[type="number"].form-control {
+        padding-right: 0.5rem;
     }
-    .invalid-feedback {
-        display: block;
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+    /* Button Styles */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        height: auto;
+        min-height: 45px;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        background-color: #2a3d5d;
+        border-color: #2a3d5d;
+        transform: translateY(-2px);
+    }
+
+    /* Alert Styles */
+    .alert {
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .form-control, 
+        .select2-container--bootstrap4 .select2-selection {
+            font-size: 16px; /* Prevents zoom on mobile */
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+            margin: 0.5rem 0;
+        }
     }
 </style>
 @stop

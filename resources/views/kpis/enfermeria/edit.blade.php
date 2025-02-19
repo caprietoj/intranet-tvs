@@ -107,18 +107,185 @@
 
 @section('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <style>
-    .invalid-feedback {
+    :root {
+        --primary: #364E76;
+        --accent: #ED3236;
+        --input-height: 50px;
+        --border-radius: 8px;
+    }
+
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
         display: block;
     }
-    .select2-container .select2-selection--single {
-        height: 38px !important;
+
+    .form-control {
+        height: var(--input-height) !important;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+        background-color: #fff;
     }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 38px !important;
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+        outline: none;
     }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px !important;
+
+    select.form-control {
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .select2-container--bootstrap4 .select2-selection {
+        height: var(--input-height) !important;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius);
+    }
+
+    .select2-container--bootstrap4 .select2-selection__rendered {
+        line-height: calc(var(--input-height) - 2px) !important;
+        padding-left: 1rem !important;
+    }
+
+    .select2-container--bootstrap4 .select2-selection__arrow {
+        height: calc(var(--input-height) - 2px) !important;
+        top: 0 !important;
+    }
+
+    .btn {
+        height: var(--input-height);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(54, 78, 118, 0.2);
+    }
+
+    .invalid-feedback {
+        color: var(--accent);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .form-control, .btn {
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .btn {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    /* Estilos mejorados para Select2 */
+    .select2-container--bootstrap4 .select2-selection {
+        height: var(--input-height) !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 1rem;
+        line-height: 1.5;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--single {
+        padding-right: 2.5rem !important;
+        background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") no-repeat right 1rem center/16px 12px !important;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+        padding: 0 !important;
+        line-height: 1.5 !important;
+        color: #495057;
+        height: auto;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+        display: none;
+    }
+
+    .select2-container--bootstrap4.select2-container--focus .select2-selection {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+    }
+
+    .select2-container--bootstrap4 .select2-dropdown {
+        border-color: var(--primary);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .select2-container--bootstrap4 .select2-results__option {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+        background-color: var(--primary);
+    }
+
+    .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 0.5rem;
+    }
+
+    .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+
+    /* Ajustes responsivos para Select2 */
+    @media (max-width: 768px) {
+        .select2-container--bootstrap4 .select2-selection {
+            font-size: 16px;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option {
+            font-size: 16px;
+        }
     }
 </style>
 @stop
@@ -127,20 +294,17 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Inicializar Select2 para mejorar la experiencia de usuario en los selects
-    $('#threshold_id').select2({
-        placeholder: 'Seleccione un KPI',
-        allowClear: true
-    });
-
-    $('#type').select2({
-        placeholder: 'Seleccione el tipo',
-        allowClear: true
-    });
-
-    $('#frequency').select2({
-        placeholder: 'Seleccione la frecuencia',
-        allowClear: true
+    $('.select2-container').addClass('w-100');
+    
+    // Inicialización mejorada de Select2
+    $('.form-control[name="type"], .form-control[name="threshold_id"], .form-control[name="frequency"]').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        placeholder: 'Seleccione una opción',
+        allowClear: true,
+        dropdownAutoWidth: true,
+        containerCssClass: 'select2-container--full',
+        dropdownCssClass: 'select2-dropdown--full'
     });
 
     // Validación del lado del cliente
