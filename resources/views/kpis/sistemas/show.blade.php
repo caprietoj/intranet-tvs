@@ -30,3 +30,114 @@
     </div>
 </div>
 @stop
+
+@section('css')
+<style>
+    :root {
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --success: #28a745;
+        --danger: #dc3545;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
+
+    .text-primary { 
+        color: var(--primary) !important; 
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .card {
+        background: #ffffff;
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 2rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.12);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        color: white;
+        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .card-body p {
+        margin-bottom: 1.25rem;
+        font-size: 1rem;
+        color: #495057;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-body p strong {
+        color: var(--primary);
+        min-width: 200px;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 20px;
+    }
+
+    .badge-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+
+    .badge-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #f86384 100%);
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a5298 0%, var(--primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #868e96 0%, #6c757d 100%);
+        transform: translateY(-2px);
+    }
+</style>
+@stop

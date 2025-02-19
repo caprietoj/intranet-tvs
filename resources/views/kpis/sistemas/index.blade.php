@@ -164,22 +164,121 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-.card-header {
-    background-color: #39446D !important;
-    color: white !important;
-}
-.btn-primary {
-    background-color: #39446D;
-    border-color: #39446D;
-}
-.btn-primary:hover {
-    background-color: #2c3356;
-    border-color: #2c3356;
-}
-.page-item.active .page-link {
-    background-color: #39446D;
-    border-color: #39446D;
-}
+    :root {
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --success: #28a745;
+        --danger: #dc3545;
+        --info: #17a2b8;
+        --warning: #ffc107;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
+
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%) !important;
+        color: white !important;
+        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        padding: 1.5rem;
+    }
+
+    .table thead th {
+        background: rgba(26, 72, 132, 0.05);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 20px;
+    }
+
+    .badge-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+
+    .badge-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #f86384 100%);
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        margin: 0 0.2rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a5298 0%, var(--primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    .select2-container--bootstrap4 .select2-selection {
+        border: 2px solid #e9ecef;
+        border-radius: var(--border-radius);
+        min-height: 45px;
+        padding: 0.5rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
+        border-radius: var(--border-radius);
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--box-shadow);
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .btn {
+            width: 100%;
+            margin: 0.25rem 0;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .btn-group .btn {
+            margin: 0.25rem 0;
+        }
+    }
 </style>
 @stop
 

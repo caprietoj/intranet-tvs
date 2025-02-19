@@ -175,7 +175,7 @@ class KpiComprasController extends Controller
 
     public function editCompras($id)
     {
-        $kpi = ComprasKpi::findOrFail($id);
+        $kpi = ComprasKpi::with('threshold')->findOrFail($id);
         $thresholds = ComprasThreshold::where('area', 'compras')->get();
         $types = ['measurement' => 'Medición', 'informative' => 'Informativo'];
         return view('kpis.compras.edit', compact('kpi', 'thresholds', 'types'));
@@ -183,38 +183,48 @@ class KpiComprasController extends Controller
 
     public function updateCompras(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'threshold_id' => 'required|exists:thresholds,id',
-            'type' => 'required|in:measurement,informative',
-            'methodology' => 'required|string',
-            'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
-            'measurement_date' => 'required|date',
-            'percentage' => 'required|numeric|min:0|max:100',
-        ]);
+        try {
+            DB::beginTransaction();
+            
+            // Find the KPI first
+            $kpi = ComprasKpi::findOrFail($id);
+            
+            // Validate threshold exists
+            $threshold = ComprasThreshold::findOrFail($request->threshold_id);
 
-        if ($validator->fails()) {
+            $validated = $request->validate([
+                'threshold_id' => 'required|exists:compras_thresholds,id',
+                'type' => 'required|in:measurement,informative',
+                'methodology' => 'required|string',
+                'frequency' => 'required|in:Diario,Quincenal,Mensual,Semestral',
+                'measurement_date' => 'required|date',
+                'percentage' => 'required|numeric|min:0|max:100',
+            ]);
+
+            $kpi->update([
+                'threshold_id' => $threshold->id,
+                'name' => $threshold->kpi_name,
+                'type' => $validated['type'],
+                'methodology' => $validated['methodology'],
+                'frequency' => $validated['frequency'],
+                'measurement_date' => $validated['measurement_date'],
+                'percentage' => $validated['percentage']
+            ]);
+
+            DB::commit();
             return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
+                ->route('kpis.compras.index')
+                ->with('success', 'KPI actualizado exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al actualizar KPI: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el KPI: ' . $e->getMessage());
         }
-
-        $kpi = ComprasKpi::findOrFail($id);
-        $threshold = ComprasThreshold::findOrFail($request->threshold_id);
-
-        $kpi->update([
-            'threshold_id' => $threshold->id,
-            'name' => $threshold->kpi_name,
-            'type' => $request->type,
-            'methodology' => $request->methodology,
-            'frequency' => $request->frequency,
-            'measurement_date' => $request->measurement_date,
-            'percentage' => $request->percentage,
-        ]);
-
-        return redirect()
-            ->route('kpis.compras.show', $kpi->id)
-            ->with('success', 'KPI actualizado exitosamente.');
     }
 
     public function destroyCompras($id)

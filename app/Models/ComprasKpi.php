@@ -38,15 +38,10 @@ class ComprasKpi extends Model
     {
         parent::boot();
         
-        static::creating(function ($kpi) {
-            if ($kpi->threshold) {
-                $kpi->status = $kpi->percentage >= $kpi->threshold->value ? 'Alcanzado' : 'No Alcanzado';
-            }
-        });
-
-        static::updating(function ($kpi) {
-            if ($kpi->threshold) {
-                $kpi->status = $kpi->percentage >= $kpi->threshold->value ? 'Alcanzado' : 'No Alcanzado';
+        static::saving(function ($kpi) {
+            $threshold = $kpi->threshold;
+            if ($threshold) {
+                $kpi->status = $kpi->percentage >= $threshold->value ? 'Alcanzado' : 'No Alcanzado';
             }
         });
     }

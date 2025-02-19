@@ -130,124 +130,102 @@
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <style>
     :root {
-        --primary: #364E76;
-        --accent: #ED3236;
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --success: #28a745;
+        --danger: #dc3545;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
     }
 
-    /* General Styles */
     .text-primary {
         color: var(--primary) !important;
         font-weight: 600;
+        letter-spacing: 0.5px;
     }
 
     .custom-card {
+        background: #ffffff;
         border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
     }
 
-    /* Form Styles */
     .form-group {
         margin-bottom: 1.5rem;
     }
 
     .form-label {
-        color: #495057;
-        font-weight: 500;
+        color: var(--primary);
+        font-weight: 600;
         margin-bottom: 0.75rem;
-        display: block;
         font-size: 0.95rem;
+        display: block;
     }
 
     .form-control {
-        height: auto;
-        min-height: 45px;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        border: 1px solid #ced4da;
         border-radius: 6px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        height: auto;
+        font-size: 0.95rem;
         transition: all 0.3s ease;
     }
 
     .form-control:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(26, 72, 132, 0.25);
     }
 
-    /* Select2 Customization */
     .select2-container--bootstrap4 .select2-selection {
-        height: auto !important;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
         min-height: 45px;
         padding: 0.5rem;
     }
 
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
-        padding: 0;
-        line-height: 1.5;
-        color: #495057;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
-        height: 100%;
-    }
-
     .select2-container--bootstrap4.select2-container--focus .select2-selection {
         border-color: var(--primary);
-        box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(26, 72, 132, 0.25);
     }
 
-    /* Input Types Specific */
-    input[type="date"].form-control {
-        padding: 0.5rem 1rem;
-    }
-
-    input[type="number"].form-control {
-        padding-right: 0.5rem;
-    }
-
-    textarea.form-control {
-        min-height: 120px;
-    }
-
-    /* Button Styles */
     .btn {
         padding: 0.75rem 1.5rem;
-        border-radius: 6px;
         font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.3s ease;
-        height: auto;
-        min-height: 45px;
     }
 
     .btn-primary {
-        background-color: var(--primary);
-        border-color: var(--primary);
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
     }
 
     .btn-primary:hover {
-        background-color: #2a3d5d;
-        border-color: #2a3d5d;
+        background: linear-gradient(135deg, #2a5298 0%, var(--primary) 100%);
         transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
     }
 
-    /* Alert Styles */
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        border: none;
+    }
+
     .alert {
-        border-radius: 6px;
-        margin-bottom: 1.5rem;
+        border-radius: var(--border-radius);
+        border: none;
+        box-shadow: var(--box-shadow);
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
-        .form-control, 
-        .select2-container--bootstrap4 .select2-selection {
-            font-size: 16px; /* Prevents zoom on mobile */
-        }
-
         .btn {
             width: 100%;
             justify-content: center;

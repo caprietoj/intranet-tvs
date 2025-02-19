@@ -221,37 +221,51 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     :root {
-        --primary: #364E76;
-        --accent: #ED3236;
+        --primary: #1a4884;
+        --secondary: #6c757d;
         --success: #28a745;
+        --danger: #dc3545;
+        --info: #17a2b8;
         --warning: #ffc107;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
     }
 
-    .text-primary { 
+    .text-primary {
         color: var(--primary) !important;
         font-weight: 600;
+        letter-spacing: 0.5px;
     }
 
     .custom-card {
+        background: #ffffff;
         border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .btn-primary {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        padding: 0.5rem 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
+    .custom-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.12);
     }
 
-    .btn-primary:hover {
-        background-color: #2a3d5d;
-        border-color: #2a3d5d;
-        transform: translateY(-2px);
+    .card-header {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        padding: 1.5rem;
+    }
+
+    .bg-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%) !important;
+    }
+
+    .bg-info {
+        background: linear-gradient(135deg, var(--info) 0%, #36b9cc 100%) !important;
+    }
+
+    .bg-success {
+        background: linear-gradient(135deg, var(--success) 0%, #2dce89 100%) !important;
     }
 
     .table {
@@ -259,32 +273,99 @@
     }
 
     .table thead th {
-        background-color: var(--primary);
-        color: white;
-        border: none;
+        border-top: none;
+        background: rgba(0,0,0,.05);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
         padding: 1rem;
-        font-weight: 500;
     }
 
     .table td {
         vertical-align: middle;
-        padding: 0.75rem 1rem;
+        padding: 1rem;
     }
 
     .badge {
-        padding: 0.5em 1em;
-        font-size: 0.85em;
-        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 20px;
     }
 
-    .badge-success { background-color: var(--success); }
-    .badge-danger { background-color: var(--accent); }
-    .badge-warning { background-color: var(--warning); }
+    .badge-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
 
-    /* DataTables Customization */
+    .badge-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #f86384 100%);
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+    }
+
+    .btn-group .btn {
+        margin: 0 0.2rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a5298 0%, var(--primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    .info-box {
+        background: #ffffff;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .info-box-icon {
+        border-radius: var(--border-radius);
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #36b9cc 100%);
+        border: none;
+        color: white;
+    }
+
+    .select2-container--bootstrap4 .select2-selection {
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        min-height: 45px;
+        padding: 0.5rem;
+    }
+
     .dataTables_wrapper .dataTables_paginate .paginate_button.current {
         background: var(--primary) !important;
         border-color: var(--primary) !important;
+        color: white !important;
+        border-radius: 6px;
     }
 </style>
 @stop
