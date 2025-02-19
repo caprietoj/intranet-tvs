@@ -40,41 +40,32 @@ class RecursosHumanosThresholdController extends Controller
     }
 
     // Muestra el formulario para editar el threshold para RRHH
-    public function editRecursosHumanos()
+    public function editRecursosHumanos($id)
     {
-         $threshold = RecursosHumanosThreshold::first();
-         if (!$threshold){
-              return redirect()->route('umbral.rrhh.create');
-         }
-         return view('threshold.rrhh.edit', compact('threshold'));
+        $threshold = RecursosHumanosThreshold::findOrFail($id);
+        return view('threshold.rrhh.edit', compact('threshold'));
     }
 
     // Actualiza el threshold para RRHH
-    public function updateRecursosHumanos(Request $request)
+    public function updateRecursosHumanos(Request $request, $id)
     {
-         $validator = Validator::make($request->all(), [
-              'kpi_name' => 'required|string|max:255',
-              'value'    => 'required|numeric|min:0|max:100'
-         ]);
+        $validator = Validator::make($request->all(), [
+            'kpi_name' => 'required|string|max:255',
+            'value' => 'required|numeric|min:0|max:100'
+        ]);
 
-         if ($validator->fails()){
-              return redirect()->back()->withErrors($validator)->withInput();
-         }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-         $threshold = RecursosHumanosThreshold::first();
-         if (!$threshold) {
-              $threshold = RecursosHumanosThreshold::create([
-                   'kpi_name' => $request->kpi_name,
-                   'value'    => $request->value,
-              ]);
-         } else {
-              $threshold->update([
-                   'kpi_name' => $request->kpi_name,
-                   'value'    => $request->value,
-              ]);
-         }
+        $threshold = RecursosHumanosThreshold::findOrFail($id);
+        $threshold->update([
+            'kpi_name' => $request->kpi_name,
+            'value' => $request->value
+        ]);
 
-         return redirect()->route('umbral.rrhh.show')->with('success', 'Threshold de Recursos Humanos actualizado exitosamente.');
+        return redirect()->route('umbral.rrhh.show')
+            ->with('success', 'Threshold de Recursos Humanos actualizado exitosamente.');
     }
 
     // Muestra en una tabla todos los thresholds configurados para RRHH (vista con DataTables y SweetAlert2)

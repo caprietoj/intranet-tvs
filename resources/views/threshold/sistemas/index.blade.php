@@ -39,6 +39,88 @@
 
 @section('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+<style>
+    :root {
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --success: #28a745;
+        --danger: #dc3545;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
+
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.12);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .table thead th {
+        background: linear-gradient(to right, rgba(26, 72, 132, 0.05), rgba(26, 72, 132, 0.1));
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        padding: 1rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.875rem;
+        margin: 0 0.25rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a5298 0%, var(--primary) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc3545 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.25);
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.35);
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important;
+        border-radius: 6px;
+    }
+</style>
 @stop
 
 @section('js')

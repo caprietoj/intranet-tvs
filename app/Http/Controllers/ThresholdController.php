@@ -49,20 +49,16 @@ class ThresholdController extends Controller
      * Muestra el formulario para editar el threshold para el área de Enfermería.
      * Se asume que se desea editar el threshold principal (por ejemplo, el primero) para Enfermería.
      */
-    public function editEnfermeria()
+    public function editEnfermeria($id)
     {
-        $threshold = Threshold::where('area', 'enfermeria')->first();
-        if (!$threshold) {
-            // Si no existe ningún threshold, redirige al formulario de creación.
-            return redirect()->route('umbral.enfermeria.create');
-        }
+        $threshold = Threshold::findOrFail($id);
         return view('threshold.enfermeria.edit', compact('threshold'));
     }
 
     /**
      * Actualiza el threshold para el área de Enfermería.
      */
-    public function updateEnfermeria(Request $request)
+    public function updateEnfermeria(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'kpi_name' => 'required|string|max:255',
@@ -73,19 +69,11 @@ class ThresholdController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $threshold = Threshold::where('area', 'enfermeria')->first();
-        if (!$threshold) {
-            $threshold = Threshold::create([
-                'area'     => 'enfermeria',
-                'kpi_name' => $request->kpi_name,
-                'value'    => $request->value,
-            ]);
-        } else {
-            $threshold->update([
-                'kpi_name' => $request->kpi_name,
-                'value'    => $request->value,
-            ]);
-        }
+        $threshold = Threshold::findOrFail($id);
+        $threshold->update([
+            'kpi_name' => $request->kpi_name,
+            'value'    => $request->value,
+        ]);
 
         // Redirige a la vista que muestra todos los thresholds configurados
         return redirect()->route('umbral.enfermeria.show')->with('success', 'Umbral actualizado exitosamente.');
