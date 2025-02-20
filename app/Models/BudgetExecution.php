@@ -8,6 +8,7 @@ class BudgetExecution extends Model
 {
     protected $fillable = [
         'department',
+        'month',
         'budget_amount',
         'executed_amount',
         'execution_percentage',
