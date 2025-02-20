@@ -14,14 +14,22 @@ use App\Models\SistemasThreshold;
 
 class KPIReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Fetch KPI records with error handling
-            $kpis = Kpi::all() ?? collect([]);
-            $comprasKpis = ComprasKpi::all() ?? collect([]);
-            $recursosKpi = RecursosHumanosKpi::all() ?? collect([]);
-            $sistemasKpi = SistemasKpi::all() ?? collect([]);
+            $query = function($model) use ($request) {
+                $q = $model::query();
+                if ($request->month) {
+                    $q->whereMonth('created_at', date('m', strtotime("01 {$request->month} 2024")));
+                }
+                return $q->get();
+            };
+
+            // Fetch KPI records with month filter
+            $kpis = $query(Kpi::class);
+            $comprasKpis = $query(ComprasKpi::class);
+            $recursosKpi = $query(RecursosHumanosKpi::class);
+            $sistemasKpi = $query(SistemasKpi::class);
 
             // Fetch thresholds with error handling
             $enfermeriaThresholds = Threshold::all() ?? collect([]);
@@ -65,6 +73,13 @@ class KPIReportController extends Controller
                     ? 'No se alcanzó el umbral esperado'
                     : 'Umbral alcanzado'
             ];
+
+            if ($request->ajax()) {
+                return response()->json(compact(
+                    'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',
+                    'enfermeriaAnalysis', 'comprasAnalysis', 'rrhhAnalysis', 'sistemasAnalysis'
+                ));
+            }
 
             return view('reports.kpi_report', compact(
                 'kpis', 'comprasKpis', 'recursosKpi', 'sistemasKpi',

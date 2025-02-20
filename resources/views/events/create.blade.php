@@ -87,7 +87,8 @@
 
             <div class="form-group">
                 <label>Solicitud de parqueadero CAFAM</label>
-                <select name="cafam_parking" class="form-control">
+                <select name="cafam_parking" class="form-control" required>
+                    <option value="">Seleccione una opción</option>
                     <option value="0">No</option>
                     <option value="1">Sí</option>
                 </select>
@@ -281,33 +282,104 @@
 
 @section('css')
 <style>
-.service-group {
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 1rem;
-}
+    :root {
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
 
-.service-group:last-child {
-    border-bottom: none;
-}
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
 
-.service-fields {
-    margin-left: 1.5rem;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 0.25rem;
-    margin-top: 0.5rem;
-}
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        color: white;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        border-bottom: none;
+    }
 
-/* Asegurarse de que las clases específicas existan */
-.metro-junior-fields,
-.general-services-fields,
-.maintenance-fields,
-.systems-fields,
-.aldimark-fields,
-.purchases-fields,
-.communications-fields {
-    display: none;
-}
+    .service-group {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .service-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .service-fields {
+        margin-left: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-radius: var(--border-radius);
+        margin-top: 1rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-group label {
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 2px solid #e9ecef;
+        padding: 0.5rem 1rem;
+        height: calc(2.25rem + 8px);
+        font-size: 1rem;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(26, 72, 132, 0.25);
+    }
+
+    textarea.form-control {
+        height: auto;
+        min-height: 100px;
+    }
+
+    select.form-control {
+        padding-right: 2rem;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 8px;
+    }
+
+    .text-primary {
+        color: var(--primary) !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
 </style>
 @stop
 

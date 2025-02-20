@@ -21,8 +21,7 @@ use App\Http\Controllers\SistemasKpiController;
 use App\Http\Controllers\SistemasThresholdController;
 
 // contabilidad
-use App\Http\Controllers\ContabilidadKpiController;
-use App\Http\Controllers\ContabilidadThresholdController;
+use App\Http\Controllers\BudgetExecutionController; // Add this line
 
 
 // Documentos
@@ -76,10 +75,6 @@ Route::middleware('auth')->group(function () {
 
         // Nueva ruta para editar el umbral en Enfermería.
         Route::get('umbral/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
-
-        Route::get('umbral/{id}/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
-        Route::put('umbral/{id}', [ThresholdController::class, 'updateEnfermeria'])->name('umbral.enfermeria.update');
-        Route::delete('umbral/{id}', [ThresholdController::class, 'destroyEnfermeria'])->name('umbral.enfermeria.destroy');
     });
 
     Route::prefix('compras')->group(function () {
@@ -114,39 +109,17 @@ Route::middleware('auth')->group(function () {
         // Rutas de Threshold para RRHH
         Route::get('umbral/create', [RecursosHumanosThresholdController::class, 'createRecursosHumanos'])->name('umbral.rrhh.create');
         Route::post('umbral', [RecursosHumanosThresholdController::class, 'storeRecursosHumanos'])->name('umbral.rrhh.store');
-        Route::get('umbral/{id}/edit', [RecursosHumanosThresholdController::class, 'editRecursosHumanos'])->name('umbral.rrhh.edit');
-        Route::put('umbral/{id}', [RecursosHumanosThresholdController::class, 'updateRecursosHumanos'])->name('umbral.rrhh.update');
+        Route::get('umbral/edit', [RecursosHumanosThresholdController::class, 'editRecursosHumanos'])->name('umbral.rrhh.edit');
+        Route::put('umbral', [RecursosHumanosThresholdController::class, 'updateRecursosHumanos'])->name('umbral.rrhh.update');
         Route::get('umbral/show', [RecursosHumanosThresholdController::class, 'showRecursosHumanos'])->name('umbral.rrhh.show');
         Route::delete('umbral/{id}', [RecursosHumanosThresholdController::class, 'destroyRecursosHumanos'])->name('umbral.rrhh.destroy');
     });
 
-    // Remove or comment out old contabilidad routes
-    // Route::prefix('kpis/contabilidad')... 
-    // Route::prefix('threshold/contabilidad')...
-
-    // Add consolidated contabilidad routes
-    Route::prefix('contabilidad')->middleware(['auth'])->group(function () {
-        // KPI routes
-        Route::prefix('kpis')->name('kpis.contabilidad.')->group(function () {
-            Route::get('/', [ContabilidadKpiController::class, 'indexContabilidad'])->name('index');
-            Route::get('/create', [ContabilidadKpiController::class, 'createContabilidad'])->name('create');
-            Route::post('/', [ContabilidadKpiController::class, 'storeContabilidad'])->name('store');
-            Route::get('/{id}', [ContabilidadKpiController::class, 'showContabilidad'])->name('show');
-            Route::get('/{id}/edit', [ContabilidadKpiController::class, 'editContabilidad'])->name('edit');
-            Route::put('/{id}', [ContabilidadKpiController::class, 'updateContabilidad'])->name('update');
-            Route::delete('/{id}', [ContabilidadKpiController::class, 'destroyContabilidad'])->name('destroy');
-        });
-
-        // Umbral routes
-        Route::prefix('umbral')->name('umbral.contabilidad.')->group(function () {
-            Route::get('/', [ContabilidadThresholdController::class, 'indexContabilidad'])->name('index');
-            Route::get('/create', [ContabilidadThresholdController::class, 'createContabilidad'])->name('create');
-            Route::post('/', [ContabilidadThresholdController::class, 'storeContabilidad'])->name('store');
-            Route::get('/show', [ContabilidadThresholdController::class, 'showContabilidad'])->name('show');
-            Route::get('/{id}/edit', [ContabilidadThresholdController::class, 'editContabilidad'])->name('edit');
-            Route::put('/{id}', [ContabilidadThresholdController::class, 'updateContabilidad'])->name('update');
-            Route::delete('/{id}', [ContabilidadThresholdController::class, 'destroyContabilidad'])->name('destroy');
-        });
+    Route::prefix('contabilidad')->group(function () {
+        // Budget routes
+        Route::get('/budget', [BudgetExecutionController::class, 'index'])->name('budget.index');
+        Route::get('/budget/create', [BudgetExecutionController::class, 'create'])->name('budget.create');
+        Route::post('/budget', [BudgetExecutionController::class, 'store'])->name('budget.store');
     });
 
     Route::prefix('sistemas')->group(function () {
@@ -162,8 +135,8 @@ Route::middleware('auth')->group(function () {
         // Rutas de Threshold para Sistemas
         Route::get('umbral/create', [SistemasThresholdController::class, 'createSistemas'])->name('umbral.sistemas.create');
         Route::post('umbral', [SistemasThresholdController::class, 'storeSistemas'])->name('umbral.sistemas.store');
-        Route::get('umbral/{id}/edit', [SistemasThresholdController::class, 'editSistemas'])->name('umbral.sistemas.edit');
-        Route::put('umbral/{id}', [SistemasThresholdController::class, 'updateSistemas'])->name('umbral.sistemas.update');
+        Route::get('umbral/edit', [SistemasThresholdController::class, 'editSistemas'])->name('umbral.sistemas.edit');
+        Route::put('umbral', [SistemasThresholdController::class, 'updateSistemas'])->name('umbral.sistemas.update');
         Route::get('umbral/index', [SistemasThresholdController::class, 'indexSistemas'])->name('umbral.sistemas.index');
         Route::delete('umbral/{id}', [SistemasThresholdController::class, 'destroySistemas'])->name('umbral.sistemas.destroy');
     });
@@ -193,10 +166,7 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para el reporte de KPIs
     Route::group(['prefix' => 'admin'], function () {
-    Route::get('kpis/report', [KPIReportController::class, 'downloadReport'])->name('reports.index');
-        // También las rutas para PDF y HTML, si las necesitas:
-    //Route::get('kpis/report/download/pdf', [KPIReportController::class, 'downloadPDF'])->name('report.download.pdf');
-    //Route::get('kpis/report/download/html', [KPIReportController::class, 'downloadHTML'])->name('report.download.html');
+    Route::get('kpis/report', [KPIReportController::class, 'index'])->name('kpi-report.index');
     });
 
     // Rutas para el controlador de asistencias

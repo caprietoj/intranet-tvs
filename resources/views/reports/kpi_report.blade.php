@@ -1,390 +1,229 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard KPIs')
+@section('title', 'Dashboard de KPIs')
 
 @section('content_header')
-    <h1 class="text-primary">Dashboard de KPIs Institucionales</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Dashboard de Indicadores de Gestión</h1>
+        <select id="monthFilter" class="form-control" style="width: 200px;">
+            <option value="">Todos los meses</option>
+            @foreach(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $mes)
+                <option value="{{ $mes }}">{{ $mes }}</option>
+            @endforeach
+        </select>
+    </div>
 @stop
 
 @section('content')
-    <div class="container-fluid">
-        <!-- Resumen General -->
+    @if(isset($error))
+        <div class="alert alert-danger">{{ $error }}</div>
+    @else
+        <!-- Tarjetas de Análisis -->
         <div class="row">
+            <!-- Enfermería -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>{{ number_format($enfermeriaAnalysis['avg_percentage'], 1) }}%</h3>
+                        <h3 id="enfermeriaPercentage">{{ number_format($enfermeriaAnalysis['avg_percentage'], 1) }}%</h3>
                         <p>Promedio KPIs Enfermería</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-heartbeat"></i>
                     </div>
+                    <div class="small-box-footer">
+                        {{ $enfermeriaAnalysis['status'] }}
+                    </div>
                 </div>
             </div>
+
+            <!-- Compras -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">
                     <div class="inner">
-                        <h3>{{ number_format($comprasAnalysis['avg_percentage'], 1) }}%</h3>
+                        <h3 id="comprasPercentage">{{ number_format($comprasAnalysis['avg_percentage'], 1) }}%</h3>
                         <p>Promedio KPIs Compras</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-shopping-cart"></i>
                     </div>
+                    <div class="small-box-footer">
+                        {{ $comprasAnalysis['status'] }}
+                    </div>
                 </div>
             </div>
+
+            <!-- RRHH -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-warning">
                     <div class="inner">
-                        <h3>{{ number_format($rrhhAnalysis['avg_percentage'], 1) }}%</h3>
+                        <h3 id="rrhhPercentage">{{ number_format($rrhhAnalysis['avg_percentage'], 1) }}%</h3>
                         <p>Promedio KPIs RRHH</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-users"></i>
                     </div>
+                    <div class="small-box-footer">
+                        {{ $rrhhAnalysis['status'] }}
+                    </div>
                 </div>
             </div>
+
+            <!-- Sistemas -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>{{ number_format($sistemasAnalysis['avg_percentage'], 1) }}%</h3>
+                        <h3 id="sistemasPercentage">{{ number_format($sistemasAnalysis['avg_percentage'], 1) }}%</h3>
                         <p>Promedio KPIs Sistemas</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-laptop-code"></i>
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="small-box-footer">
+                        {{ $sistemasAnalysis['status'] }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Gráficos Principales -->
-        <div class="row">
+        <!-- Gráficos -->
+        <div class="row mt-4">
+            <!-- Gráfico de Tendencias -->
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-heartbeat mr-2"></i>
-                            KPIs Enfermería
-                        </h3>
+                        <h3 class="card-title">Tendencia de KPIs por Área</h3>
                     </div>
                     <div class="card-body">
-                        <canvas id="enfermeriaChart" height="300"></canvas>
+                        <canvas id="trendChart" height="300"></canvas>
                     </div>
                 </div>
             </div>
+
+            <!-- Gráfico de Comparación -->
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            KPIs Compras
-                        </h3>
+                        <h3 class="card-title">Comparación con Umbrales</h3>
                     </div>
                     <div class="card-body">
-                        <canvas id="comprasChart" height="300"></canvas>
+                        <canvas id="thresholdChart" height="300"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Tablas de KPIs -->
         <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-users mr-2"></i>
-                            KPIs Recursos Humanos
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="rrhhChart" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-laptop-code mr-2"></i>
-                            KPIs Sistemas
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="sistemasChart" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reemplazar la sección del Análisis Comparativo -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-chart-line mr-2"></i>
-                            Análisis Comparativo de KPIs
-                        </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
+            @foreach([
+                'enfermeria' => ['title' => 'Enfermería', 'data' => $kpis, 'thresholds' => $enfermeriaThresholds],
+                'compras' => ['title' => 'Compras', 'data' => $comprasKpis, 'thresholds' => $comprasThresholds],
+                'rrhh' => ['title' => 'Recursos Humanos', 'data' => $recursosKpi, 'thresholds' => $rrhhThresholds],
+                'sistemas' => ['title' => 'Sistemas', 'data' => $sistemasKpi, 'thresholds' => $sistemasThresholds]
+            ] as $key => $section)
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">KPIs {{ $section['title'] }}</h3>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <canvas id="comparativeChart" height="300"></canvas>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="analysis-summary">
-                                    <h4 class="text-primary mb-4">Resumen de Rendimiento</h4>
-                                    <div class="summary-item mb-3">
-                                        <h5>Enfermería</h5>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-info" role="progressbar" 
-                                                 style="width: {{ $enfermeriaAnalysis['avg_percentage'] }}%" 
-                                                 aria-valuenow="{{ $enfermeriaAnalysis['avg_percentage'] }}" 
-                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ number_format($enfermeriaAnalysis['avg_percentage'], 1) }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="summary-item mb-3">
-                                        <h5>Compras</h5>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" 
-                                                 style="width: {{ $comprasAnalysis['avg_percentage'] }}%" 
-                                                 aria-valuenow="{{ $comprasAnalysis['avg_percentage'] }}" 
-                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ number_format($comprasAnalysis['avg_percentage'], 1) }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="summary-item mb-3">
-                                        <h5>RRHH</h5>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-warning" role="progressbar" 
-                                                 style="width: {{ $rrhhAnalysis['avg_percentage'] }}%" 
-                                                 aria-valuenow="{{ $rrhhAnalysis['avg_percentage'] }}" 
-                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ number_format($rrhhAnalysis['avg_percentage'], 1) }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="summary-item mb-3">
-                                        <h5>Sistemas</h5>
-                                        <div class="progress">
-                                            <div class="progress-bar bg-danger" role="progressbar" 
-                                                 style="width: {{ $sistemasAnalysis['avg_percentage'] }}%" 
-                                                 aria-valuenow="{{ $sistemasAnalysis['avg_percentage'] }}" 
-                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ number_format($sistemasAnalysis['avg_percentage'], 1) }}%
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" data-area="{{ $key }}">
+                                    <thead>
+                                        <tr>
+                                            <th>KPI</th>
+                                            <th>Valor Actual</th>
+                                            <th>Umbral</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($section['data'] as $kpi)
+                                            <tr>
+                                                <td>{{ $kpi->name }}</td>
+                                                <td>{{ number_format($kpi->percentage, 1) }}%</td>
+                                                <td>
+                                                    @php
+                                                        $threshold = $section['thresholds']->where('kpi_name', $kpi->name)->first();
+                                                    @endphp
+                                                    {{ $threshold ? number_format($threshold->value, 1) . '%' : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    @if($threshold)
+                                                        @if($kpi->percentage >= $threshold->value)
+                                                            <span class="badge badge-success">Alcanzado</span>
+                                                        @else
+                                                            <span class="badge badge-danger">No Alcanzado</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="badge badge-warning">Sin Umbral</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
-    </div>
+    @endif
 @stop
 
 @section('css')
 <style>
-    .small-box {
-        border-radius: 8px;
-        transition: transform 0.3s ease;
-    }
-    .small-box:hover {
-        transform: translateY(-5px);
-    }
-    .card {
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .card-header {
-        background-color: #364E76;
-        color: white;
-        border-radius: 8px 8px 0 0;
-    }
-    .chart-container {
-        position: relative;
-        margin: auto;
-    }
-    .analysis-summary {
-        padding: 1.5rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-    }
-
-    .summary-item h5 {
-        color: #364E76;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .progress {
-        height: 25px;
-        border-radius: 6px;
-        background-color: #e9ecef;
-    }
-
-    .progress-bar {
-        font-size: 0.9rem;
-        font-weight: 600;
-        line-height: 25px;
-        transition: width 0.6s ease;
-    }
+    .small-box { transition: all .3s ease; }
+    .small-box:hover { transform: translateY(-3px); }
+    .table td, .table th { vertical-align: middle; }
+    .badge { font-size: 0.9em; padding: 0.5em 0.75em; }
 </style>
 @stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 100
-            }
+$(document).ready(function() {
+    // Configuración inicial de DataTables
+    let tables = $('.table').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
         },
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
-    };
-
-    // Enfermería Chart
-    new Chart(document.getElementById('enfermeriaChart'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($enfermeriaThresholds->pluck('kpi_name')) !!},
-            datasets: [{
-                label: 'Porcentaje Alcanzado',
-                data: {!! json_encode($kpis->pluck('percentage')) !!},
-                backgroundColor: 'rgba(60, 141, 188, 0.7)',
-                borderColor: 'rgba(60, 141, 188, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Umbral',
-                data: {!! json_encode($enfermeriaThresholds->pluck('value')) !!},
-                type: 'line',
-                borderColor: '#ED3236',
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: chartOptions
+        "pageLength": 10,
+        "order": [[0, "asc"]]
     });
 
-    // Compras Chart
-    new Chart(document.getElementById('comprasChart'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($comprasThresholds->pluck('kpi_name')) !!},
-            datasets: [{
-                label: 'Porcentaje Alcanzado',
-                data: {!! json_encode($comprasKpis->pluck('percentage')) !!},
-                backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Umbral',
-                data: {!! json_encode($comprasThresholds->pluck('value')) !!},
-                type: 'line',
-                borderColor: '#ED3236',
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: chartOptions
-    });
-
-    // RRHH Chart
-    new Chart(document.getElementById('rrhhChart'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($rrhhThresholds->pluck('kpi_name')) !!},
-            datasets: [{
-                label: 'Porcentaje Alcanzado',
-                data: {!! json_encode($recursosKpi->pluck('percentage')) !!},
-                backgroundColor: 'rgba(255, 193, 7, 0.7)',
-                borderColor: 'rgba(255, 193, 7, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Umbral',
-                data: {!! json_encode($rrhhThresholds->pluck('value')) !!},
-                type: 'line',
-                borderColor: '#ED3236',
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: chartOptions
-    });
-
-    // Sistemas Chart
-    new Chart(document.getElementById('sistemasChart'), {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($sistemasThresholds->pluck('kpi_name')) !!},
-            datasets: [{
-                label: 'Porcentaje Alcanzado',
-                data: {!! json_encode($sistemasKpi->pluck('percentage')) !!},
-                backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                borderColor: 'rgba(220, 53, 69, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Umbral',
-                data: {!! json_encode($sistemasThresholds->pluck('value')) !!},
-                type: 'line',
-                borderColor: '#ED3236',
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: chartOptions
-    });
-
-    // Reemplazar la configuración del gráfico comparativo
-    new Chart(document.getElementById('comparativeChart'), {
+    // Inicializar gráficos
+    const trendChart = new Chart(document.getElementById('trendChart'), {
         type: 'line',
         data: {
-            labels: ['Enfermería', 'Compras', 'RRHH', 'Sistemas'],
-            datasets: [{
-                label: 'Promedio Real',
-                data: [
-                    {{ $enfermeriaAnalysis['avg_percentage'] }},
-                    {{ $comprasAnalysis['avg_percentage'] }},
-                    {{ $rrhhAnalysis['avg_percentage'] }},
-                    {{ $sistemasAnalysis['avg_percentage'] }}
-                ],
-                borderColor: 'rgba(54, 78, 118, 1)',
-                backgroundColor: 'rgba(54, 78, 118, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }, {
-                label: 'Umbral Esperado',
-                data: [
-                    {{ $enfermeriaAnalysis['avg_threshold'] }},
-                    {{ $comprasAnalysis['avg_threshold'] }},
-                    {{ $rrhhAnalysis['avg_threshold'] }},
-                    {{ $sistemasAnalysis['avg_threshold'] }}
-                ],
-                borderColor: 'rgba(237, 50, 54, 1)',
-                backgroundColor: 'rgba(237, 50, 54, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }]
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [
+                {
+                    label: 'Enfermería',
+                    data: {!! json_encode($kpis->pluck('percentage')) !!},
+                    borderColor: '#17a2b8',
+                    fill: false
+                },
+                {
+                    label: 'Compras',
+                    data: {!! json_encode($comprasKpis->pluck('percentage')) !!},
+                    borderColor: '#28a745',
+                    fill: false
+                },
+                {
+                    label: 'RRHH',
+                    data: {!! json_encode($recursosKpi->pluck('percentage')) !!},
+                    borderColor: '#ffc107',
+                    fill: false
+                },
+                {
+                    label: 'Sistemas',
+                    data: {!! json_encode($sistemasKpi->pluck('percentage')) !!},
+                    borderColor: '#dc3545',
+                    fill: false
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -392,28 +231,104 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + context.parsed.y + '%';
-                        }
-                    }
+                    max: 100
                 }
             }
         }
     });
+
+    const thresholdChart = new Chart(document.getElementById('thresholdChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Enfermería', 'Compras', 'RRHH', 'Sistemas'],
+            datasets: [
+                {
+                    label: 'Valor Actual',
+                    data: [
+                        {{ $enfermeriaAnalysis['avg_percentage'] }},
+                        {{ $comprasAnalysis['avg_percentage'] }},
+                        {{ $rrhhAnalysis['avg_percentage'] }},
+                        {{ $sistemasAnalysis['avg_percentage'] }}
+                    ],
+                    backgroundColor: ['#17a2b8', '#28a745', '#ffc107', '#dc3545']
+                },
+                {
+                    label: 'Umbral',
+                    data: [
+                        {{ $enfermeriaAnalysis['avg_threshold'] }},
+                        {{ $comprasAnalysis['avg_threshold'] }},
+                        {{ $rrhhAnalysis['avg_threshold'] }},
+                        {{ $sistemasAnalysis['avg_threshold'] }}
+                    ],
+                    type: 'line',
+                    borderColor: '#6c757d',
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Filtrado por mes
+    $('#monthFilter').change(function() {
+        let selectedMonth = $(this).val();
+        
+        // Actualizar datos vía AJAX
+        $.ajax({
+            url: '{{ route("kpi-report.index") }}',
+            data: { month: selectedMonth },
+            success: function(response) {
+                // Actualizar gráficos
+                updateCharts(response);
+                // Actualizar tablas
+                updateTables(response);
+                // Actualizar tarjetas de análisis
+                updateAnalysisCards(response);
+            }
+        });
+    });
 });
+
+function updateCharts(data) {
+    // Actualizar datos de los gráficos
+    trendChart.data.datasets[0].data = data.kpis;
+    trendChart.data.datasets[1].data = data.comprasKpis;
+    trendChart.data.datasets[2].data = data.recursosKpi;
+    trendChart.data.datasets[3].data = data.sistemasKpi;
+    trendChart.update();
+
+    thresholdChart.data.datasets[0].data = [
+        data.enfermeriaAnalysis.avg_percentage,
+        data.comprasAnalysis.avg_percentage,
+        data.rrhhAnalysis.avg_percentage,
+        data.sistemasAnalysis.avg_percentage
+    ];
+    thresholdChart.update();
+}
+
+function updateTables(data) {
+    // Actualizar contenido de las tablas
+    $('.table').each(function() {
+        let table = $(this).DataTable();
+        table.clear().rows.add(data[$(this).data('area')]).draw();
+    });
+}
+
+function updateAnalysisCards(data) {
+    // Actualizar valores en las tarjetas
+    $('#enfermeriaPercentage').text(data.enfermeriaAnalysis.avg_percentage.toFixed(1) + '%');
+    $('#comprasPercentage').text(data.comprasAnalysis.avg_percentage.toFixed(1) + '%');
+    $('#rrhhPercentage').text(data.rrhhAnalysis.avg_percentage.toFixed(1) + '%');
+    $('#sistemasPercentage').text(data.sistemasAnalysis.avg_percentage.toFixed(1) + '%');
+}
 </script>
 @stop

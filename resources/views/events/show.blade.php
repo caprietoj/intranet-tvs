@@ -151,9 +151,69 @@
 
 @section('css')
 <style>
-.table th {
-    width: 200px;
-    background-color: #f8f9fa;
-}
+    :root {
+        --primary: #1a4884;
+        --success: #28a745;
+        --warning: #ffc107;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
+
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.12);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        width: 200px;
+        background: linear-gradient(to right, rgba(26, 72, 132, 0.05), rgba(26, 72, 132, 0.1));
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .badge-success {
+        background: linear-gradient(135deg, var(--success) 0%, #20c997 100%);
+    }
+
+    .badge-warning {
+        background: linear-gradient(135deg, var(--warning) 0%, #ffdb4d 100%);
+        color: #000;
+    }
+
+    .alert {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.35);
+    }
 </style>
 @stop

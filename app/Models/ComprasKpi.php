@@ -13,36 +13,26 @@ class ComprasKpi extends Model
 
     protected $fillable = [
         'threshold_id',
+        'area',
         'name',
-        'type',
         'methodology',
         'frequency',
         'measurement_date',
         'percentage',
-        'status'
+        'type'
     ];
 
-    protected $casts = [
-        'measurement_date' => 'date',
-        'percentage' => 'decimal:2'
-    ];
-
-    // Relación con el threshold
     public function threshold()
     {
         return $this->belongsTo(ComprasThreshold::class, 'threshold_id');
     }
 
-    // Calcular status automáticamente
-    protected static function boot()
+    public function getStatusAttribute()
     {
-        parent::boot();
-        
-        static::saving(function ($kpi) {
-            $threshold = $kpi->threshold;
-            if ($threshold) {
-                $kpi->status = $kpi->percentage >= $threshold->value ? 'Alcanzado' : 'No Alcanzado';
-            }
-        });
+        if (!$this->relationLoaded('threshold')) {
+            $this->load('threshold');
+        }
+        $thresholdValue = $this->threshold ? $this->threshold->value : 80;
+        return ($this->percentage >= $thresholdValue) ? 'Alcanzado' : 'No Alcanzado';
     }
 }

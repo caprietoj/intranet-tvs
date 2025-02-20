@@ -78,7 +78,75 @@
 
 @section('css')
 <style>
-.progress { height: 20px; }
+    :root {
+        --primary: #1a4884;
+        --secondary: #6c757d;
+        --success: #28a745;
+        --danger: #dc3545;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    }
+
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .progress {
+        height: 20px;
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        transition: width 0.6s ease;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--success) 0%, #20c997 100%);
+    }
+
+    .table thead th {
+        background: linear-gradient(to right, rgba(26, 72, 132, 0.05), rgba(26, 72, 132, 0.1));
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        margin: 0 0.2rem;
+    }
+
+    .btn i {
+        margin-right: 0.3rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a5298 100%);
+        border: none;
+        box-shadow: 0 2px 4px rgba(26, 72, 132, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(26, 72, 132, 0.35);
+    }
+
+    @media (max-width: 768px) {
+        .btn {
+            margin: 0.2rem 0;
+            display: block;
+            width: 100%;
+        }
+    }
 </style>
 @stop
 
