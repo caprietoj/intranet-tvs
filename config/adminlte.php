@@ -329,6 +329,25 @@ return [
             'can' => 'ticket.view',
         ],
         [
+            'text' => 'Mantenimiento',
+            'url'  => 'maintenance',
+            'icon' => 'fas fa-tools',
+            'can' => 'view.maintenance',
+            
+            'submenu' => [
+                [
+                    'text' => 'Ver Solicitudes',
+                    'url'  => 'maintenance',
+                    'icon' => 'fas fa-list'
+                ],
+                [
+                    'text' => 'Nueva Solicitud',
+                    'url'  => 'maintenance/create',
+                    'icon' => 'fas fa-plus'
+                ],
+            ]
+        ],
+        [
             'text' => 'Reserva de Equipos',
             'icon' => 'fas fa-laptop',
             'submenu' => [
@@ -547,6 +566,11 @@ return [
                     'text' => 'Informe Help-Desk',
                     'url'  => 'tickets/dashboard',
                     'icon' => 'fas fa-ticket-alt',
+                ],
+                [
+                    'text' => 'Informe Mantenimiento',
+                    'url'  => 'maintenance/dashboard',
+                    'icon' => 'fas fa-tools',
                 ],
                 [
                     'text' => 'Informe Biométrico',

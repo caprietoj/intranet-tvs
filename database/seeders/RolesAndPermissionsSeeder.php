@@ -59,7 +59,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.kpis',
             'view.budget',
             'view.announcements',
-            'view.calendar'
+            'view.calendar',
+            'view.maintenance',
 
 
         ];
@@ -95,6 +96,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'view.dashboard']),
             Permission::firstOrCreate(['name' => 'ticket.view']),
             Permission::firstOrCreate(['name' => 'document-requests']),
+            Permission::firstOrCreate(['name' => 'view.maintenance']),
         ]);
 
          // Crear el rol "enfermeria"
@@ -108,6 +110,7 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'umbral.enfermeria.create']),
              Permission::firstOrCreate(['name' => 'umbral.enfermeria.show']),
              Permission::firstOrCreate(['name' => 'view.kpis']),
+             Permission::firstOrCreate(['name' => 'view.maintenance']),
 
 
          ]);
@@ -121,6 +124,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'view.budget']),
             Permission::firstOrCreate(['name' => 'Ejecución Presupuestal']),
             Permission::firstOrCreate(['name' => 'Registrar Presupuesto']),
+            Permission::firstOrCreate(['name' => 'view.maintenance']),
 
         ]);
 
@@ -135,6 +139,7 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'umbral.compras.create']),
              Permission::firstOrCreate(['name' => 'umbral.compras.show']),
              Permission::firstOrCreate(['name' => 'view.kpis']),
+             Permission::firstOrCreate(['name' => 'view.maintenance']),
          ]);
 
           // Crear el rol "rrhh"
@@ -150,6 +155,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'view.kpis']),
             Permission::firstOrCreate(['name' => 'documents']),
             Permission::firstOrCreate(['name' => 'document-requests']),
+            Permission::firstOrCreate(['name' => 'view.maintenance']),
 
         ]);
 
@@ -161,6 +167,15 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'document-requests']),
              Permission::firstOrCreate(['name' => 'equipment.reserva']),
              Permission::firstOrCreate(['name' => 'view.reservas']),
+             Permission::firstOrCreate(['name' => 'view.maintenance']),
+         ]);
+
+         $usuarioRole = Role::firstOrCreate(['name' => 'mantenimiento']);
+         $usuarioRole->syncPermissions([
+             Permission::firstOrCreate(['name' => 'view.dashboard']),
+             Permission::firstOrCreate(['name' => 'ticket.view']),
+             Permission::firstOrCreate(['name' => 'document-requests']),
+             Permission::firstOrCreate(['name' => 'view.maintenance']),
          ]);
     }
 }

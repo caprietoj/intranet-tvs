@@ -36,6 +36,7 @@ use App\Http\Controllers\AttendanceController; // Agregar esta línea
 use App\Http\Controllers\EventController;  // Agregar esta línea
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\MaintenanceRequestController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -207,6 +208,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [EquipmentController::class, 'dashboard'])->name('equipment.dashboard');
         Route::get('/loans/data', [EquipmentController::class, 'getLoansData'])->name('equipment.loans.data');
     });
+
+    Route::get('maintenance/dashboard', [MaintenanceRequestController::class, 'dashboard'])
+        ->name('maintenance.dashboard');
+    Route::resource('maintenance', MaintenanceRequestController::class);
+    Route::patch('maintenance/{maintenance}/status', [MaintenanceRequestController::class, 'updateStatus'])
+        ->name('maintenance.status');
 });
 
 require __DIR__.'/auth.php';
