@@ -177,5 +177,16 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'document-requests']),
              Permission::firstOrCreate(['name' => 'view.maintenance']),
          ]);
+
+         $usuarioRole = Role::firstOrCreate(['name' => 'asistentes']);
+         $usuarioRole->syncPermissions([
+             Permission::firstOrCreate(['name' => 'view.dashboard']),
+             Permission::firstOrCreate(['name' => 'ticket.view']),
+             Permission::firstOrCreate(['name' => 'document-requests']),
+             Permission::firstOrCreate(['name' => 'view.maintenance']),
+             permission::firstOrCreate(['name' => 'view.events']),
+             permission::firstOrCreate(['name' => 'view.calendar']),
+
+         ]);
     }
 }
