@@ -45,6 +45,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.users',
             'equipment.manage',
             'equipment.reset',
+            'equipment.inventory',
+            'equipment.reserva',
+            'view.reservas',
             'view.reservations',
             'view.events',
             'view.reports',
@@ -52,7 +55,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'kpis.contabilidad.create',
             'kpis.contabilidad.index',
             'umbral.contabilidad.create',
-            'umbral.contabilidad.show'
+            'umbral.contabilidad.show',
+            'view.kpis',
+            'view.budget',
+            'view.announcements',
+            'view.calendar'
 
 
         ];
@@ -89,5 +96,71 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'ticket.view']),
             Permission::firstOrCreate(['name' => 'document-requests']),
         ]);
+
+         // Crear el rol "enfermeria"
+         $usuarioRole = Role::firstOrCreate(['name' => 'enfermeria']);
+         $usuarioRole->syncPermissions([
+             Permission::firstOrCreate(['name' => 'view.dashboard']),
+             Permission::firstOrCreate(['name' => 'ticket.view']),
+             Permission::firstOrCreate(['name' => 'document-requests']),
+             Permission::firstOrCreate(['name' => 'kpis.enfermeria.create']),
+             Permission::firstOrCreate(['name' => 'kpis.enfermeria.index']),
+             Permission::firstOrCreate(['name' => 'umbral.enfermeria.create']),
+             Permission::firstOrCreate(['name' => 'umbral.enfermeria.show']),
+             Permission::firstOrCreate(['name' => 'view.kpis']),
+
+
+         ]);
+
+          // Crear el rol "contabilidad"
+        $usuarioRole = Role::firstOrCreate(['name' => 'contabilidad']);
+        $usuarioRole->syncPermissions([
+            Permission::firstOrCreate(['name' => 'view.dashboard']),
+            Permission::firstOrCreate(['name' => 'ticket.view']),
+            Permission::firstOrCreate(['name' => 'document-requests']),
+            Permission::firstOrCreate(['name' => 'view.budget']),
+            Permission::firstOrCreate(['name' => 'Ejecución Presupuestal']),
+            Permission::firstOrCreate(['name' => 'Registrar Presupuesto']),
+
+        ]);
+
+         // Crear el rol "compras"
+         $usuarioRole = Role::firstOrCreate(['name' => 'compras']);
+         $usuarioRole->syncPermissions([
+             Permission::firstOrCreate(['name' => 'view.dashboard']),
+             Permission::firstOrCreate(['name' => 'ticket.view']),
+             Permission::firstOrCreate(['name' => 'document-requests']),
+             Permission::firstOrCreate(['name' => 'kpis.compras.create']),
+             Permission::firstOrCreate(['name' => 'kpis.compras.index']),
+             Permission::firstOrCreate(['name' => 'umbral.compras.create']),
+             Permission::firstOrCreate(['name' => 'umbral.compras.show']),
+             Permission::firstOrCreate(['name' => 'view.kpis']),
+         ]);
+
+          // Crear el rol "rrhh"
+        $usuarioRole = Role::firstOrCreate(['name' => 'rrhh']);
+        $usuarioRole->syncPermissions([
+            Permission::firstOrCreate(['name' => 'view.dashboard']),
+            Permission::firstOrCreate(['name' => 'ticket.view']),
+            Permission::firstOrCreate(['name' => 'document-requests']),
+            Permission::firstOrCreate(['name' => 'kpis.recursoshumanos.create']),
+            Permission::firstOrCreate(['name' => 'kpis.recursoshumanos.index']),
+            Permission::firstOrCreate(['name' => 'umbral.recursoshumanos.create']),
+            Permission::firstOrCreate(['name' => 'umbral.recursoshumanos.show']),
+            Permission::firstOrCreate(['name' => 'view.kpis']),
+            Permission::firstOrCreate(['name' => 'documents']),
+            Permission::firstOrCreate(['name' => 'document-requests']),
+
+        ]);
+
+         // Crear el rol "profesor"
+         $usuarioRole = Role::firstOrCreate(['name' => 'profesor']);
+         $usuarioRole->syncPermissions([
+             Permission::firstOrCreate(['name' => 'view.dashboard']),
+             Permission::firstOrCreate(['name' => 'ticket.view']),
+             Permission::firstOrCreate(['name' => 'document-requests']),
+             Permission::firstOrCreate(['name' => 'equipment.reserva']),
+             Permission::firstOrCreate(['name' => 'view.reservas']),
+         ]);
     }
 }

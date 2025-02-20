@@ -342,18 +342,19 @@ return [
                     'text' => 'Gestionar Inventario',
                     'url'  => 'equipment',
                     'icon' => 'fas fa-boxes',
-                    'can'  => 'equipment.manage',
+                    'can'  => 'equipment.inventory',
                 ],
                 [
                     'text' => 'Solicitar Préstamo',
                     'url'  => 'equipment/request',
                     'icon' => 'fas fa-hand-holding',
+                    'can'  => 'equipment.reserva',
                 ],
                 [
                     'text' => 'Ver Préstamos',
                     'url'  => 'equipment/loans',
                     'icon' => 'fas fa-list',
-                    'can'  => 'view.reservations',
+                    'can'  => 'view.reservas',
                 ],
             ],
         ],
@@ -378,6 +379,7 @@ return [
         [
             'text'    => "KPI'S TVS",
             'icon'    => 'fas fa-chart-line',
+            'can'     => 'view.kpis',
             'submenu' => [
                 [
                     'text'    => 'Enfermería',
@@ -504,16 +506,19 @@ return [
                 [
                     'text'    => 'Contabilidad',
                     'icon'    => 'fas fa-calculator',
+                    'can'     => 'view.budget',
                     'submenu' => [
                         [
                             'text' => 'Ejecución Presupuestal',
                             'url'  => 'contabilidad/budget',
                             'icon' => 'fas fa-money-bill',
+                            'can'  => 'Ejecución Presupuestal',
                         ],
                         [
                             'text' => 'Registrar Presupuesto',
                             'url'  => 'contabilidad/budget/create',
                             'icon' => 'fas fa-plus-circle',
+                            'can'  => 'Registrar Presupuesto',
                         ],
                     ],
                 ],
@@ -531,6 +536,7 @@ return [
             'text' => 'Calendario de Eventos',
             'url'  => 'events/calendar',
             'icon' => 'fas fa-calendar',
+            'can' => 'view.calendar',
         ],
         [
             'text'    => 'Informes',
@@ -608,6 +614,7 @@ return [
         [
             'text' => 'Avisos Importantes',
             'icon' => 'fas fa-bullhorn',
+            'can' => 'view.announcements',
             'submenu' => [
                 [
                     'text' => 'Crear Aviso',
