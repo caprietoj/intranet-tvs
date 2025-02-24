@@ -37,6 +37,7 @@ use App\Http\Controllers\EventController;  // Agregar esta línea
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\MaintenanceRequestController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -63,7 +64,8 @@ Route::middleware('auth')->group(function () {
     
         // Rutas para la Configuración del Umbral en Enfermería
         Route::get('umbral', [ThresholdController::class, 'indexEnfermeria'])->name('umbral.enfermeria.index');
-        Route::post('umbral', [ThresholdController::class, 'updateEnfermeria'])->name('umbral.enfermeria.update');
+        Route::put('umbral/{id}', [ThresholdController::class, 'updateEnfermeria'])->name('umbral.enfermeria.update');
+        Route::post('umbral', [ThresholdController::class, 'storeEnfermeria'])->name('umbral.enfermeria.store');
         
         // (Opcional) Ruta para visualizar el threshold en modo "show"
         Route::get('umbral/show', [ThresholdController::class, 'showEnfermeria'])->name('umbral.enfermeria.show');
@@ -75,7 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::post('umbral/store', [ThresholdController::class, 'storeEnfermeria'])->name('umbral.enfermeria.store');
 
         // Nueva ruta para editar el umbral en Enfermería.
-        Route::get('umbral/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
+        Route::get('umbral/{id}/edit', [ThresholdController::class, 'editEnfermeria'])->name('umbral.enfermeria.edit');
     });
 
     Route::prefix('compras')->group(function () {
@@ -91,8 +93,8 @@ Route::middleware('auth')->group(function () {
         // Rutas de Threshold para Compras
         Route::get('umbral/create', [ThresholdComprasController::class, 'createCompras'])->name('umbral.compras.create');
         Route::post('umbral', [ThresholdComprasController::class, 'storeCompras'])->name('umbral.compras.store');
-        Route::get('umbral/edit', [ThresholdComprasController::class, 'editCompras'])->name('umbral.compras.edit');
-        Route::put('umbral', [ThresholdComprasController::class, 'updateCompras'])->name('umbral.compras.update');
+        Route::get('umbral/{id}/edit', [ThresholdComprasController::class, 'editCompras'])->name('umbral.compras.edit');
+        Route::put('umbral/{id}', [ThresholdComprasController::class, 'updateCompras'])->name('umbral.compras.update');
         Route::get('umbral/show', [ThresholdComprasController::class, 'showCompras'])->name('umbral.compras.show');
         Route::delete('umbral/{id}', [ThresholdComprasController::class, 'destroyCompras'])->name('umbral.compras.destroy');
     });
@@ -110,8 +112,8 @@ Route::middleware('auth')->group(function () {
         // Rutas de Threshold para RRHH
         Route::get('umbral/create', [RecursosHumanosThresholdController::class, 'createRecursosHumanos'])->name('umbral.rrhh.create');
         Route::post('umbral', [RecursosHumanosThresholdController::class, 'storeRecursosHumanos'])->name('umbral.rrhh.store');
-        Route::get('umbral/edit', [RecursosHumanosThresholdController::class, 'editRecursosHumanos'])->name('umbral.rrhh.edit');
-        Route::put('umbral', [RecursosHumanosThresholdController::class, 'updateRecursosHumanos'])->name('umbral.rrhh.update');
+        Route::get('umbral/{id}/edit', [RecursosHumanosThresholdController::class, 'editRecursosHumanos'])->name('umbral.rrhh.edit');
+        Route::put('umbral/{id}', [RecursosHumanosThresholdController::class, 'updateRecursosHumanos'])->name('umbral.rrhh.update');
         Route::get('umbral/show', [RecursosHumanosThresholdController::class, 'showRecursosHumanos'])->name('umbral.rrhh.show');
         Route::delete('umbral/{id}', [RecursosHumanosThresholdController::class, 'destroyRecursosHumanos'])->name('umbral.rrhh.destroy');
     });
@@ -136,8 +138,8 @@ Route::middleware('auth')->group(function () {
         // Rutas de Threshold para Sistemas
         Route::get('umbral/create', [SistemasThresholdController::class, 'createSistemas'])->name('umbral.sistemas.create');
         Route::post('umbral', [SistemasThresholdController::class, 'storeSistemas'])->name('umbral.sistemas.store');
-        Route::get('umbral/edit', [SistemasThresholdController::class, 'editSistemas'])->name('umbral.sistemas.edit');
-        Route::put('umbral', [SistemasThresholdController::class, 'updateSistemas'])->name('umbral.sistemas.update');
+        Route::get('umbral/{id}/edit', [SistemasThresholdController::class, 'editSistemas'])->name('umbral.sistemas.edit');
+        Route::put('umbral/{id}', [SistemasThresholdController::class, 'updateSistemas'])->name('umbral.sistemas.update');
         Route::get('umbral/index', [SistemasThresholdController::class, 'indexSistemas'])->name('umbral.sistemas.index');
         Route::delete('umbral/{id}', [SistemasThresholdController::class, 'destroySistemas'])->name('umbral.sistemas.destroy');
     });
@@ -221,6 +223,9 @@ require __DIR__.'/auth.php';
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Announcement routes
+Route::resource('announcements', App\Http\Controllers\AnnouncementController::class);
 
 
 

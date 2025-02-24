@@ -417,13 +417,13 @@ return [
                             'can' => 'kpis.enfermeria.index',
                         ],
                         [
-                            'text' => 'Configurar Umbral',
+                            'text' => 'Crear Umbral',
                             'url'  => 'enfermeria/umbral/create',
                             'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.enfermeria.create',
                         ],
                         [
-                            'text' => 'Umbrales Configurados',
+                            'text' => 'Ver Umbral',
                             'url'  => 'enfermeria/umbral/show',
                             'icon' => 'fas fa-list-alt',
                             'can' => 'umbral.enfermeria.show',
@@ -447,7 +447,7 @@ return [
                             'can' => 'kpis.compras.index',
                         ],
                         [
-                            'text' => 'Configuración del Umbral',
+                            'text' => 'Crear Umbral',
                             'url'  => 'compras/umbral/create',
                             'icon' => 'fas fa-sliders-h',
                             'can' => 'umbral.compras.create',
