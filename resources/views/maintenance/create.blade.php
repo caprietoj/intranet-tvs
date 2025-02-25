@@ -24,6 +24,17 @@
                         <option value="plomeria">Plomería</option>
                         <option value="electricidad">Electricidad</option>
                         <option value="adecuaciones">Adecuaciones</option>
+                        <option value="goteras">Goteras</option>
+                        <option value="pintura">Pintura</option>
+                        <option value="carpinteria">Carpintería</option>
+                        <option value="cerrajeria">Cerrajería</option>
+                        <option value="vidrios">Vidrios</option>
+                        <option value="jardineria">Jardinería</option>
+                        <option value="cambio_de_bombillos">Cambio de Bombillos</option>
+                        <option value="demarcacion_de_canchas">Demarcación de Canchas</option>
+                        <option value="traslado_de_mobiliario">Traslado de Mobiliario</option>
+                        <option value="limpieza_de_tanques_de_agua">Limpieza de Tanques de Agua</option>
+                        <option value="otros">Otros</option>
                     </select>
                     @error('request_type')
                         <span class="invalid-feedback">{{ $message }}</span>

@@ -18,7 +18,18 @@ return new class extends Migration
                 'modificacion',
                 'plomeria',
                 'electricidad',
-                'adecuaciones'
+                'adecuaciones',
+                'Goteras',
+                'Pintura',
+                'Carpinteria',
+                'Cerrajeria',
+                'Vidrios',
+                'Jardineria',
+                'Cambio de bombillos',
+                'Demarcacion de Canchas',
+                'Traslado de Mobiliario',
+                'Limpieza de Tanques de Agua',
+                'Otros'
             ]);
             $table->string('location');
             $table->text('description');
