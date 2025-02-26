@@ -3,14 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\MaintenanceRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MaintenanceRequestCreated;
 use Illuminate\Support\Facades\DB;
+use App\Mail\MaintenanceRequestCreated;
 use Carbon\Carbon;
 
 class MaintenanceRequestController extends Controller
 {
+    private $requestTypes = [
+        'mantenimiento_preventivo' => 'Mantenimiento Preventivo',
+        'mantenimiento_correctivo' => 'Mantenimiento Correctivo',
+        'instalaciones' => 'Instalaciones',
+        'modificacion' => 'Modificación',
+        'plomeria' => 'Plomería',
+        'electricidad' => 'Electricidad',
+        'adecuaciones' => 'Adecuaciones',
+        'goteras' => 'Goteras',
+        'pintura' => 'Pintura',
+        'carpinteria' => 'Carpintería',
+        'cerrajeria' => 'Cerrajería',
+        'vidrios' => 'Vidrios',
+        'jardineria' => 'Jardinería',
+        'cambio_de_bombillos' => 'Cambio de Bombillos',
+        'demarcacion_de_canchas' => 'Demarcación de Canchas',
+        'traslado_de_mobiliario' => 'Traslado de Mobiliario',
+        'limpieza_de_tanques_de_agua' => 'Limpieza de Tanques de Agua',
+        'otros' => 'Otros'
+    ];
+
     public function index()
     {
         $user = auth()->user();
@@ -23,22 +45,31 @@ class MaintenanceRequestController extends Controller
 
     public function create()
     {
-        return view('maintenance.create');
+        return view('maintenance.create', [
+            'request_types' => $this->requestTypes
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'request_type' => 'required',
             'location' => 'required',
-            'description' => 'required',
-            'priority' => 'required|in:low,medium,high'
+            'description' => 'required'
         ]);
 
-        $validated['user_id'] = auth()->id();
-        $validated['status'] = 'pending';
+        // Calculate priority based on request type and description
+        $priority = $this->calculatePriority($request->request_type, $request->description);
 
-        $maintenanceRequest = MaintenanceRequest::create($validated);
-        
+        $maintenanceRequest = MaintenanceRequest::create([
+            'user_id' => auth()->id(),
+            'request_type' => strval($validated['request_type']), // Convertir explícitamente a string
+            'location' => $validated['location'],
+            'description' => $validated['description'],
+            'priority' => $priority,
+            'status' => 'pending'
+        ]);
+
         // Enviar correo al usuario
         Mail::to(auth()->user()->email)->send(
             new MaintenanceRequestCreated($maintenanceRequest)
@@ -50,7 +81,23 @@ class MaintenanceRequestController extends Controller
         );
         
         return redirect()->route('maintenance.index')
-            ->with('success', 'Solicitud creada exitosamente');
+            ->with('success', 'La solicitud de mantenimiento ha sido creada exitosamente');
+    }
+
+    public function update(Request $request, MaintenanceRequest $maintenance)
+    {
+        $validated = $request->validate([
+            'request_type' => 'required',
+            'location' => 'required',
+            'description' => 'required',
+            'status' => 'required_if:user_role,admin',
+            'technician_id' => 'nullable|exists:users,id'
+        ]);
+
+        $maintenance->update($validated);
+
+        return redirect()->route('maintenance.index')
+            ->with('success', 'Solicitud actualizada exitosamente');
     }
 
     public function updateStatus(MaintenanceRequest $maintenance, Request $request)
@@ -138,6 +185,62 @@ class MaintenanceRequestController extends Controller
             'recentRequests',
             'dateRange'
         ));
+    }
+
+    public function show(MaintenanceRequest $maintenance)
+    {
+        $technicians = User::role('technician')->get();
+        return view('maintenance.show', compact('maintenance', 'technicians') + ['request_types' => $this->requestTypes]);
+    }
+
+    public function edit(MaintenanceRequest $maintenance)
+    {
+        $technicians = User::role('technician')->get();
+        
+        return view('maintenance.edit', compact('maintenance', 'technicians') + ['request_types' => $this->requestTypes]);
+    }
+
+    public function assignTechnician(Request $request, MaintenanceRequest $maintenance)
+    {
+        $validated = $request->validate([
+            'technician_id' => 'required|exists:users,id'
+        ]);
+
+        $maintenance->update([
+            'technician_id' => $validated['technician_id'],
+            'status' => 'in_progress'
+        ]);
+
+        return redirect()->route('maintenance.show', $maintenance)->with('success', 'Técnico asignado exitosamente');
+    }
+
+    public function destroy(MaintenanceRequest $maintenance)
+    {
+        $maintenance->delete();
+        
+        return redirect()->route('maintenance.index')
+            ->with('success', 'La solicitud de mantenimiento ha sido eliminada exitosamente');
+    }
+
+    private function calculatePriority($requestType, $description)
+    {
+        // Keywords that might indicate high priority
+        $highPriorityKeywords = ['urgente', 'emergencia', 'peligro', 'riesgo', 'inmediato'];
+        
+        // Request types that are typically high priority
+        $highPriorityTypes = ['electricidad', 'plomeria', 'goteras'];
+
+        if (in_array($requestType, $highPriorityTypes)) {
+            return 'high';
+        }
+
+        foreach ($highPriorityKeywords as $keyword) {
+            if (str_contains(strtolower($description), $keyword)) {
+                return 'high';
+            }
+        }
+
+        return 'medium';
     }
 
     private function getStartDate($range)

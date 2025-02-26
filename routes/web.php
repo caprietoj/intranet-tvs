@@ -216,6 +216,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('maintenance', MaintenanceRequestController::class);
     Route::patch('maintenance/{maintenance}/status', [MaintenanceRequestController::class, 'updateStatus'])
         ->name('maintenance.status');
+    Route::patch('maintenance/{maintenance}/assign-technician', [MaintenanceRequestController::class, 'assignTechnician'])->name('maintenance.assign-technician');
 });
 
 require __DIR__.'/auth.php';

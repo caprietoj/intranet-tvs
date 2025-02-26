@@ -48,18 +48,21 @@
                             </td>
                             <td>{{ $request->user->name }}</td>
                             <td>
-                                @if(auth()->user()->hasRole('admin'))
-                                <form action="{{ route('maintenance.status', $request) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
-                                        <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pendiente</option>
-                                        <option value="in_progress" {{ $request->status == 'in_progress' ? 'selected' : '' }}>En Proceso</option>
-                                        <option value="completed" {{ $request->status == 'completed' ? 'selected' : '' }}>Completado</option>
-                                        <option value="rejected" {{ $request->status == 'rejected' ? 'selected' : '' }}>Rechazado</option>
-                                    </select>
-                                </form>
-                                @endif
+                                <div class="btn-group">
+                                    <a href="{{ route('maintenance.show', $request) }}" class="btn btn-info btn-sm" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('maintenance.edit', $request) }}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('maintenance.destroy', $request) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm delete-request" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -140,19 +143,59 @@
             color: var(--primary);
         }
 
-        .page-link:hover {
-            color: #2a3d5d;
+        .btn-group {
+            display: flex;
+            gap: 5px;
         }
 
-        @media (max-width: 768px) {
-            .table-responsive {
-                font-size: 14px;
-            }
-            
-            .btn {
-                font-size: 14px;
-                padding: 0.375rem 0.75rem;
-            }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+        .btn-group form {
+            margin: 0;
         }
     </style>
+@stop
+
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Mensaje de éxito después de crear/actualizar
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
+        // Confirmación de eliminación
+        document.querySelectorAll('.delete-request').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                
+                Swal.fire({
+                    title: '¿Está seguro?',
+                    text: "Esta acción no se puede deshacer",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @stop

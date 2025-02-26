@@ -8,10 +8,12 @@ class MaintenanceRequest extends Model
 {
     protected $fillable = [
         'user_id',
+        'request_type',
         'location',
         'description',
         'priority',
         'status',
+        'technician_id',
         'completion_date'
     ];
 

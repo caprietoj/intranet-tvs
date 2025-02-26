@@ -17,24 +17,11 @@
                     <select class="form-control @error('request_type') is-invalid @enderror" 
                             id="request_type" name="request_type" required>
                         <option value="">Seleccione un tipo</option>
-                        <option value="mantenimiento_preventivo">Mantenimiento Preventivo</option>
-                        <option value="mantenimiento_correctivo">Mantenimiento Correctivo</option>
-                        <option value="instalaciones">Instalaciones</option>
-                        <option value="modificacion">Modificación</option>
-                        <option value="plomeria">Plomería</option>
-                        <option value="electricidad">Electricidad</option>
-                        <option value="adecuaciones">Adecuaciones</option>
-                        <option value="goteras">Goteras</option>
-                        <option value="pintura">Pintura</option>
-                        <option value="carpinteria">Carpintería</option>
-                        <option value="cerrajeria">Cerrajería</option>
-                        <option value="vidrios">Vidrios</option>
-                        <option value="jardineria">Jardinería</option>
-                        <option value="cambio_de_bombillos">Cambio de Bombillos</option>
-                        <option value="demarcacion_de_canchas">Demarcación de Canchas</option>
-                        <option value="traslado_de_mobiliario">Traslado de Mobiliario</option>
-                        <option value="limpieza_de_tanques_de_agua">Limpieza de Tanques de Agua</option>
-                        <option value="otros">Otros</option>
+                        @foreach($request_types as $value => $label)
+                            <option value="{{ $value }}" {{ old('request_type') == $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('request_type')
                         <span class="invalid-feedback">{{ $message }}</span>
@@ -55,19 +42,6 @@
                     <textarea class="form-control @error('description') is-invalid @enderror" 
                               id="description" name="description" rows="3" required></textarea>
                     @error('description')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="priority">Prioridad</label>
-                    <select class="form-control @error('priority') is-invalid @enderror" 
-                            id="priority" name="priority" required>
-                        <option value="low">Baja</option>
-                        <option value="medium">Media</option>
-                        <option value="high">Alta</option>
-                    </select>
-                    @error('priority')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div>
@@ -106,4 +80,29 @@
             box-shadow: 0 0 0 0.2rem rgba(54, 78, 118, 0.25);
         }
     </style>
+@stop
+
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            
+            Swal.fire({
+                title: '¿Confirmar envío?',
+                text: "¿Desea enviar esta solicitud de mantenimiento?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, enviar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 @stop
