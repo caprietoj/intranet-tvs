@@ -278,57 +278,99 @@ $(document).ready(function() {
         }
     });
 
-    // Filtrado por mes
+    // Mejorado el filtrado por mes
     $('#monthFilter').change(function() {
         let selectedMonth = $(this).val();
         
-        // Actualizar datos vía AJAX
         $.ajax({
             url: '{{ route("kpi-report.index") }}',
+            method: 'GET',
             data: { month: selectedMonth },
+            beforeSend: function() {
+                // Mostrar indicador de carga
+                Swal.fire({
+                    title: 'Cargando...',
+                    text: 'Actualizando datos',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            },
             success: function(response) {
+                // Cerrar indicador de carga
+                Swal.close();
+                
                 // Actualizar gráficos
                 updateCharts(response);
+                
                 // Actualizar tablas
                 updateTables(response);
-                // Actualizar tarjetas de análisis
+                
+                // Actualizar tarjetas
                 updateAnalysisCards(response);
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos'
+                });
             }
         });
     });
+
+    function updateCharts(data) {
+        trendChart.data.datasets[0].data = data.kpis.map(kpi => kpi.percentage);
+        trendChart.data.datasets[1].data = data.comprasKpis.map(kpi => kpi.percentage);
+        trendChart.data.datasets[2].data = data.recursosKpi.map(kpi => kpi.percentage);
+        trendChart.data.datasets[3].data = data.sistemasKpi.map(kpi => kpi.percentage);
+        trendChart.update();
+
+        thresholdChart.data.datasets[0].data = [
+            data.enfermeriaAnalysis.avg_percentage,
+            data.comprasAnalysis.avg_percentage,
+            data.rrhhAnalysis.avg_percentage,
+            data.sistemasAnalysis.avg_percentage
+        ];
+        thresholdChart.update();
+    }
+
+    function updateTables(data) {
+        // Actualizar tabla de Enfermería
+        updateTableContent('enfermeria', data.kpis);
+        updateTableContent('compras', data.comprasKpis);
+        updateTableContent('rrhh', data.recursosKpi);
+        updateTableContent('sistemas', data.sistemasKpi);
+    }
+
+    function updateTableContent(area, data) {
+        const table = $(`table[data-area="${area}"]`).DataTable();
+        table.clear();
+        data.forEach(item => {
+            table.row.add([
+                item.name,
+                item.percentage.toFixed(1) + '%',
+                item.threshold ? item.threshold.toFixed(1) + '%' : 'N/A',
+                getStatusBadge(item.percentage, item.threshold)
+            ]);
+        });
+        table.draw();
+    }
+
+    function getStatusBadge(percentage, threshold) {
+        if (!threshold) return '<span class="badge badge-warning">Sin Umbral</span>';
+        return percentage >= threshold 
+            ? '<span class="badge badge-success">Alcanzado</span>'
+            : '<span class="badge badge-danger">No Alcanzado</span>';
+    }
+
+    function updateAnalysisCards(data) {
+        $('#enfermeriaPercentage').text(data.enfermeriaAnalysis.avg_percentage.toFixed(1) + '%');
+        $('#comprasPercentage').text(data.comprasAnalysis.avg_percentage.toFixed(1) + '%');
+        $('#rrhhPercentage').text(data.rrhhAnalysis.avg_percentage.toFixed(1) + '%');
+        $('#sistemasPercentage').text(data.sistemasAnalysis.avg_percentage.toFixed(1) + '%');
+    }
 });
-
-function updateCharts(data) {
-    // Actualizar datos de los gráficos
-    trendChart.data.datasets[0].data = data.kpis;
-    trendChart.data.datasets[1].data = data.comprasKpis;
-    trendChart.data.datasets[2].data = data.recursosKpi;
-    trendChart.data.datasets[3].data = data.sistemasKpi;
-    trendChart.update();
-
-    thresholdChart.data.datasets[0].data = [
-        data.enfermeriaAnalysis.avg_percentage,
-        data.comprasAnalysis.avg_percentage,
-        data.rrhhAnalysis.avg_percentage,
-        data.sistemasAnalysis.avg_percentage
-    ];
-    thresholdChart.update();
-}
-
-function updateTables(data) {
-    // Actualizar contenido de las tablas
-    $('.table').each(function() {
-        let table = $(this).DataTable();
-        table.clear().rows.add(data[$(this).data('area')]).draw();
-    });
-}
-
-function updateAnalysisCards(data) {
-    // Actualizar valores en las tarjetas
-    $('#enfermeriaPercentage').text(data.enfermeriaAnalysis.avg_percentage.toFixed(1) + '%');
-    $('#comprasPercentage').text(data.comprasAnalysis.avg_percentage.toFixed(1) + '%');
-    $('#rrhhPercentage').text(data.rrhhAnalysis.avg_percentage.toFixed(1) + '%');
-    $('#sistemasPercentage').text(data.sistemasAnalysis.avg_percentage.toFixed(1) + '%');
-}
 </script>
 @stop
