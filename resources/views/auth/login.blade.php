@@ -12,15 +12,50 @@
 	<!-- AdminLTE style -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.18/css/AdminLTE.min.css">
 	<style>
-		body { background-color: #ecf0f5; }
-		.login-box { margin: 7% auto; width: 360px; }
-		.login-box-body { box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+		body { 
+			background-color: #ecf0f5; 
+		}
+		.login-box { 
+			margin: 3% auto;
+			width: 360px;
+		}
+		.login-box-body { 
+			box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+			padding: 20px;
+			border-radius: 5px;
+			background: #fff;
+		}
+		.login-logo {
+			margin-bottom: 20px;
+		}
+		.login-logo img {
+			max-width: 200px;
+			height: auto;
+			margin-bottom: 10px;
+		}
+		.login-box-msg {
+			color: #364E76;
+			font-size: 18px;
+			margin-bottom: 20px;
+		}
+		.btn-primary {
+			background-color: #364E76;
+			border-color: #364E76;
+		}
+		.btn-primary:hover {
+			background-color: #2a3d5d;
+			border-color: #2a3d5d;
+		}
+		.form-control:focus {
+			border-color: #364E76;
+			box-shadow: none;
+		}
 	</style>
 </head>
 <body>
 <div class="login-box">
 	<div class="login-logo">
-		<a href="#"><b>Intranet</b> TVS</a>
+		<img src="{{ asset('img/the_victoria.png') }}" alt="Logo Victoria School">
 	</div>
 	<div class="login-box-body">
 		<p class="login-box-msg">Ingresa tus credenciales</p>
