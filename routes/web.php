@@ -38,6 +38,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\MaintenanceRequestController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\EvaluacionProveedorController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -217,16 +219,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('maintenance/{maintenance}/status', [MaintenanceRequestController::class, 'updateStatus'])
         ->name('maintenance.status');
     Route::patch('maintenance/{maintenance}/assign-technician', [MaintenanceRequestController::class, 'assignTechnician'])->name('maintenance.assign-technician');
+
+    Route::resource('proveedores', ProveedorController::class);
+    Route::resource('evaluaciones', EvaluacionProveedorController::class);
 });
+
+// Announcement routes
+Route::resource('announcements', App\Http\Controllers\AnnouncementController::class);
 
 require __DIR__.'/auth.php';
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Announcement routes
-Route::resource('announcements', App\Http\Controllers\AnnouncementController::class);
 
 
 

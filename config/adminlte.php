@@ -546,6 +546,23 @@ return [
         ],
 
         [
+            'text'    => 'Almacén',
+            'icon'    => 'fas fa-warehouse',
+            'submenu' => [
+                [
+                    'text' => 'Proveedores',
+                    'url'  => 'proveedores',
+                    'icon' => 'fas fa-users',
+                ],
+                [
+                    'text' => 'Evaluación de Proveedores',
+                    'url'  => 'evaluaciones',
+                    'icon' => 'fas fa-star',
+                ],
+            ],
+        ],
+
+        [
             'text' => 'Eventos',
             'url'  => 'events',
             'icon' => 'fas fa-calendar-plus',
