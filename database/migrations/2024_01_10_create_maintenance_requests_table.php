@@ -20,6 +20,7 @@ return new class extends Migration
                 'electricidad',
                 'adecuaciones',
                 'Goteras',
+                'Instalacion de persianas',
                 'Pintura',
                 'Carpinteria',
                 'Cerrajeria',
