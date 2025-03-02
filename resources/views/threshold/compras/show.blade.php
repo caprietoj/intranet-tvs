@@ -1,10 +1,10 @@
 {{-- resources/views/threshold/compras/show.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Ver Umbrales Configurados - Compras')
+@section('title', 'Indicadores Configurados - Compras')
 
 @section('content_header')
-    <h1>Umbrales Configurados - Compras</h1>
+    <h1>Indicadores Configurados - Compras</h1>
 @stop
 
 @section('content')
@@ -14,8 +14,8 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre del KPI</th>
-                    <th>Valor del Threshold (%)</th>
+                    <th>Nombre del Indicador</th>
+                    <th>Valor del Indicador (%)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>

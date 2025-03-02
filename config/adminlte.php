@@ -413,13 +413,13 @@ return [
                                     'can' => 'kpis.enfermeria.index',
                                 ],
                                 [
-                                    'text' => 'Crear Umbral',
+                                    'text' => 'Crear Indicador',
                                     'url'  => 'enfermeria/umbral/create',
                                     'icon' => 'fas fa-sliders-h',
                                     'can' => 'umbral.enfermeria.create',
                                 ],
                                 [
-                                    'text' => 'Ver Umbral',
+                                    'text' => 'Indicadores',
                                     'url'  => 'enfermeria/umbral/show',
                                     'icon' => 'fas fa-list-alt',
                                     'can' => 'umbral.enfermeria.show',
@@ -443,13 +443,13 @@ return [
                                     'can' => 'kpis.compras.index',
                                 ],
                                 [
-                                    'text' => 'Crear Umbral',
+                                    'text' => 'Crear Indicador',
                                     'url'  => 'compras/umbral/create',
                                     'icon' => 'fas fa-sliders-h',
                                     'can' => 'umbral.compras.create',
                                 ],
                                 [
-                                    'text' => 'Ver Umbral',
+                                    'text' => 'Indicadores',
                                     'url'  => 'compras/umbral/show',
                                     'icon' => 'fas fa-list-alt',
                                     'can' => 'umbral.compras.show',
@@ -473,13 +473,13 @@ return [
                                     'can' => 'kpis.recursoshumanos.index',
                                 ],
                                 [
-                                    'text' => 'Crear Umbral',
+                                    'text' => 'Crear Indicador',
                                     'url'  => 'rrhh/umbral/create',
                                     'icon' => 'fas fa-sliders-h',
                                     'can' => 'umbral.recursoshumanos.create',
                                 ],
                                 [
-                                    'text' => 'Ver Umbral',
+                                    'text' => 'Indicadores',
                                     'url'  => 'rrhh/umbral/show',
                                     'icon' => 'fas fa-list-alt',
                                     'can' => 'umbral.recursoshumanos.show',
@@ -503,13 +503,13 @@ return [
                                     'can' => 'kpis.sistemas.index',
                                 ],
                                 [
-                                    'text' => 'Crear Umbral',
+                                    'text' => 'Crear Indicador',
                                     'url'  => 'sistemas/umbral/create',
                                     'icon' => 'fas fa-sliders-h',
                                     'can' => 'umbral.sistemas.create',
                                 ],
                                 [
-                                    'text' => 'Ver Umbral',
+                                    'text' => 'Indicadores',
                                     'url'  => 'sistemas/umbral/index',
                                     'icon' => 'fas fa-list-alt',
                                     'can' => 'umbral.sistemas.index',

@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Configuración del Umbral - Enfermería')
+@section('title', 'Configuración del Indicador - Enfermería')
 
 @section('content_header')
-    <h1>Configuración del Umbral - Enfermería</h1>
+    <h1>Configuración del Indicador - Enfermería</h1>
 @stop
 
 @section('content')
@@ -15,14 +15,14 @@
         <form action="{{ route('umbral.enfermeria.update') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="kpi_name">Nombre del KPI</label>
+                <label for="kpi_name">Nombre del Indicador</label>
                 <input type="text" name="kpi_name" id="kpi_name" class="form-control" value="{{ $threshold->kpi_name }}" required>
             </div>
             <div class="form-group">
-                <label for="value">Valor del Umbral (%)</label>
+                <label for="value">Valor del Indicador (%)</label>
                 <input type="number" step="0.01" name="value" id="value" class="form-control" value="{{ $threshold->value }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar Umbral</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
         </form>
     </div>
 </div>

@@ -1,10 +1,10 @@
 {{-- resources/views/threshold/enfermeria/show.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Ver Umbrales Configurados - Enfermería')
+@section('title', 'Ver Indicadores Configurados - Enfermería')
 
 @section('content_header')
-    <h1>Umbrales Configurados - Enfermería</h1>
+    <h1>Indicadores Configurados - Enfermería</h1>
 @stop
 
 @section('content')
@@ -18,8 +18,8 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre del KPI</th>
-                    <th>Valor del Threshold (%)</th>
+                    <th>Nombre del Indicador</th>
+                    <th>Valor del Indicador (%)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>

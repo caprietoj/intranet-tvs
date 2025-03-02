@@ -1,10 +1,10 @@
 {{-- resources/views/threshold/sistemas/index.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Ver Umbrales - Sistemas')
+@section('title', 'Ver Indicadores - Sistemas')
 
 @section('content_header')
-    <h1>Umbrales Configurados - Sistemas</h1>
+    <h1>Indicadores Configurados - Sistemas</h1>
 @stop
 
 @section('content')
@@ -14,8 +14,8 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre del KPI</th>
-                    <th>Valor del Threshold (%)</th>
+                    <th>Nombre del Indicador</th>
+                    <th>Valor del Indicador (%)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>

@@ -1,10 +1,10 @@
 {{-- resources/views/threshold/sistemas/edit.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Editar Threshold - Sistemas')
+@section('title', 'Editar Indicador - Sistemas')
 
 @section('content_header')
-    <h1>Editar Configuración de Threshold - Sistemas</h1>
+    <h1>Editar Configuración del Indicador - Sistemas</h1>
 @stop
 
 @section('content')
@@ -15,11 +15,11 @@
             @method('PUT')
             <input type="hidden" name="id" value="{{ $threshold->id }}">
             <div class="form-group">
-                <label for="kpi_name">Nombre del KPI</label>
+                <label for="kpi_name">Nombre del Indicador/label>
                 <input type="text" name="kpi_name" id="kpi_name" class="form-control" value="{{ $threshold->kpi_name }}" required>
             </div>
             <div class="form-group">
-                <label for="value">Valor del Umbral (%)</label>
+                <label for="value">Valor del Indicador (%)</label>
                 <input type="number" step="0.01" name="value" id="value" class="form-control" value="{{ $threshold->value }}" required>
             </div>
             <div class="d-flex justify-content-between">
@@ -27,7 +27,7 @@
                     <i class="fas fa-arrow-left mr-2"></i>Volver
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save mr-2"></i>Actualizar Umbral
+                    <i class="fas fa-save mr-2"></i>Actualizar
                 </button>
             </div>
         </form>

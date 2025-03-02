@@ -1,10 +1,10 @@
 {{-- resources/views/threshold/compras/edit.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Editar Threshold - Compras')
+@section('title', 'Editar Indicador - Compras')
 
 @section('content_header')
-    <h1>Editar Configuración de Threshold - Compras</h1>
+    <h1>Editar Configuración del Indicador - Compras</h1>
 @stop
 
 @section('css')
@@ -107,14 +107,14 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label for="kpi_name">Nombre del KPI</label>
+                <label for="kpi_name">Nombre del Indicador</label>
                 <input type="text" name="kpi_name" id="kpi_name" class="form-control" value="{{ $threshold->kpi_name }}" required>
             </div>
             <div class="form-group">
-                <label for="value">Valor del Umbral (%)</label>
+                <label for="value">Valor del Indicador (%)</label>
                 <input type="number" step="0.01" name="value" id="value" class="form-control" value="{{ $threshold->value }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar Umbral</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
         </form>
     </div>
 </div>
