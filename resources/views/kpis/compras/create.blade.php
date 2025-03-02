@@ -53,10 +53,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="threshold_id" class="form-label">
-                            Nombre del KPI <span class="text-danger">*</span>
+                            Nombre del Indicador <span class="text-danger">*</span>
                         </label>
                         <select name="threshold_id" id="threshold_id" class="form-control @error('threshold_id') is-invalid @enderror" required>
-                            <option value="">Seleccione un umbral</option>
+                            <option value="">Seleccione un Indicador</option>
                             @foreach($thresholds as $threshold)
                                 <option value="{{ $threshold->id }}" {{ old('threshold_id') == $threshold->id ? 'selected' : '' }}>
                                     {{ $threshold->kpi_name }} ({{ $threshold->value }}%)

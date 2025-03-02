@@ -36,9 +36,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="threshold_id">Nombre del KPI <span class="text-danger">*</span></label>
+                        <label for="threshold_id">Nombre del Indicador <span class="text-danger">*</span></label>
                         <select name="threshold_id" id="threshold_id" class="form-control select2bs4" required>
-                            <option value="">Seleccione un KPI</option>
+                            <option value="">Seleccione un Indicador</option>
                             @foreach($thresholds as $threshold)
                                 <option value="{{ $threshold->id }}">
                                     {{ $threshold->kpi_name }} (Umbral: {{ $threshold->value }}%)
