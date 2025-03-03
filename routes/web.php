@@ -40,6 +40,7 @@ use App\Http\Controllers\MaintenanceRequestController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\EvaluacionProveedorController;
+use App\Http\Controllers\SatisfactionSurveyController; // Add this line
 
 Route::get('/', function () {
     return redirect('/login');
@@ -99,6 +100,9 @@ Route::middleware('auth')->group(function () {
         Route::put('umbral/{id}', [ThresholdComprasController::class, 'updateCompras'])->name('umbral.compras.update');
         Route::get('umbral/show', [ThresholdComprasController::class, 'showCompras'])->name('umbral.compras.show');
         Route::delete('umbral/{id}', [ThresholdComprasController::class, 'destroyCompras'])->name('umbral.compras.destroy');
+        
+        Route::post('satisfaction/process', [SatisfactionSurveyController::class, 'processExcel'])
+            ->name('satisfaction.process');
     });
 
     Route::prefix('rrhh')->group(function () {

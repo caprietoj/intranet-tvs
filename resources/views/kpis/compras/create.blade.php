@@ -34,6 +34,28 @@
             </div>
         @endif
 
+        <!-- Nuevo bloque informativo -->
+        <div class="alert alert-info alert-dismissible fade show">
+            <h5><i class="icon fas fa-info"></i> Cálculo del Porcentaje de Satisfacción</h5>
+            <p>El sistema calcula el porcentaje de satisfacción basándose en la siguiente escala:</p>
+            <ul>
+                <li><strong>5 puntos (100%):</strong> MUY SATISFECHO / EXCELENTE / SÍ</li>
+                <li><strong>4 puntos (80%):</strong> SATISFECHO / BUENO</li>
+                <li><strong>3 puntos (60%):</strong> NEUTRAL / REGULAR / A VECES</li>
+                <li><strong>2 puntos (40%):</strong> POCO SATISFECHO / MALO</li>
+                <li><strong>1 punto (20%):</strong> INSATISFECHO / DEFICIENTE / NO</li>
+            </ul>
+            <p>El proceso de cálculo es el siguiente:</p>
+            <ol>
+                <li>Se clasifica cada respuesta según la escala anterior</li>
+                <li>Se calcula el promedio por área (estudiantes, docentes, administrativos)</li>
+                <li>Se obtiene el porcentaje final como promedio general de todas las áreas</li>
+            </ol>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
         <form action="{{ route('kpis.compras.store') }}" method="POST">
             @csrf
             <div class="row">
@@ -105,8 +127,15 @@
                         <label for="percentage" class="form-label">
                             Porcentaje Alcanzado (%) <span class="text-danger">*</span>
                         </label>
-                        <input type="number" step="0.01" min="0" max="100" name="percentage" 
-                               id="percentage" class="form-control" value="{{ old('percentage') }}" required>
+                        <div class="input-group">
+                            <input type="number" step="0.01" min="0" max="100" name="percentage" 
+                                   id="percentage" class="form-control" value="{{ old('percentage') }}" required>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#uploadExcelModal">
+                                    <i class="fas fa-file-excel"></i> Calcular desde Excel
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,6 +153,42 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadExcelModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Procesar datos de encuesta</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Datos de la encuesta</label>
+                    <textarea class="form-control" id="survey_data" rows="10" 
+                        placeholder="Pegue aquí los datos de la encuesta..."></textarea>
+                    <small class="form-text text-muted">
+                        Los datos deben contener las siguientes columnas en este orden:<br>
+                        <ul>
+                            <li>Dependencia</li>
+                            <li>1. ¿Cómo califica su experiencia con el servicio de Almacén?</li>
+                            <li>2. ¿Cómo califica los tiempos de atención?</li>
+                            <li>3. ¿Ha logrado satisfacer su necesidad?</li>
+                            <li>4. ¿Cómo consideran la disponibilidad de los elementos?</li>
+                            <li>5. Califica tu satisfacción respecto al personal para resolver tu problema.</li>
+                        </ul>
+                        Copie y pegue directamente desde Excel.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="processData">Procesar</button>
+            </div>
+        </div>
     </div>
 </div>
 @stop
@@ -243,6 +308,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function() {
     $('.select2bs4').select2({
@@ -255,6 +321,77 @@ $(document).ready(function() {
         let value = parseFloat($(this).val());
         if (value < 0) $(this).val(0);
         if (value > 100) $(this).val(100);
+    });
+});
+
+document.getElementById('processData').addEventListener('click', function() {
+    const surveyData = document.getElementById('survey_data').value;
+    const thresholdId = document.getElementById('threshold_id').value;
+    
+    if (!thresholdId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor seleccione un indicador'
+        });
+        return;
+    }
+
+    if (!surveyData.trim()) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor ingrese los datos de la encuesta'
+        });
+        return;
+    }
+
+    // Mostrar loading
+    Swal.fire({
+        title: 'Procesando datos',
+        text: 'Por favor espere...',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('{{ route("satisfaction.process") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            survey_data: surveyData,
+            threshold_id: parseInt(thresholdId)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('percentage').value = data.percentage.toFixed(2);
+            $('#uploadExcelModal').modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos procesados correctamente'
+            });
+        } else {
+            throw new Error(data.message || 'Error al procesar los datos');
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Error al procesar los datos'
+        });
+        console.error('Error:', error);
     });
 });
 </script>
