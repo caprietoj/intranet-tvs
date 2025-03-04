@@ -63,6 +63,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.maintenance',
             'view-admin-dashboard',
             'manage.configuration',
+            'view.warehouse',
         ];
        
   
@@ -97,6 +98,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'ticket.view']),
             Permission::firstOrCreate(['name' => 'document-requests']),
             Permission::firstOrCreate(['name' => 'view.maintenance']),
+            Permission::firstOrCreate(['name' => 'equipment.reserva']),
         ]);
 
          // Crear el rol "enfermeria"
@@ -140,6 +142,7 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'umbral.compras.show']),
              Permission::firstOrCreate(['name' => 'view.kpis']),
              Permission::firstOrCreate(['name' => 'view.maintenance']),
+             Permision::firstOrCreate(['name' => 'view.warehouse']),
          ]);
 
           // Crear el rol "rrhh"

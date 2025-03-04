@@ -547,6 +547,7 @@ return [
         [
             'text'    => 'Almacén',
             'icon'    => 'fas fa-warehouse',
+            'can'     => 'view.warehouse',
             'submenu' => [
                 [
                     'text' => 'Proveedores',
