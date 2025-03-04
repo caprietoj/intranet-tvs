@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\EvaluacionProveedorController;
 use App\Http\Controllers\SatisfactionSurveyController; // Add this line
+use App\Http\Controllers\ConfigurationController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -231,6 +232,32 @@ Route::middleware('auth')->group(function () {
 
 // Announcement routes
 Route::resource('announcements', App\Http\Controllers\AnnouncementController::class);
+
+Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/configuration', [ConfigurationController::class, 'index'])->name('configuration.index');
+    Route::post('/configuration/emails', [ConfigurationController::class, 'updateEmails'])->name('configuration.update-emails');
+});
+
+Route::middleware(['auth', 'can:manage.configuration'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/configuration', [ConfigurationController::class, 'index'])->name('configuration.index');
+    Route::post('/configuration/emails', [ConfigurationController::class, 'updateEmails'])->name('configuration.update-emails');
+});
+
+// Ruta de prueba para verificar envío de correos
+Route::get('/test-mail', function () {
+    $emails = app(\App\Http\Controllers\ConfigurationController::class)
+        ->getNotificationEmails('equipment_loan');
+    
+    dd([
+        'configured_emails' => $emails,
+        'mail_config' => [
+            'driver' => config('mail.default'),
+            'host' => config('mail.mailers.smtp.host'),
+            'port' => config('mail.mailers.smtp.port'),
+            'from' => config('mail.from'),
+        ]
+    ]);
+});
 
 require __DIR__.'/auth.php';
 

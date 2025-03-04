@@ -62,8 +62,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.calendar',
             'view.maintenance',
             'view-admin-dashboard',
-
-
+            'manage.configuration',
         ];
        
   

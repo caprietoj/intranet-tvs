@@ -668,6 +668,18 @@ return [
                 ],
             ],
         ],
+        [
+            'text' => 'Configuración',
+            'icon' => 'fas fa-cogs',
+            'can'  => 'manage.configuration',
+            'submenu' => [
+                [
+                    'text' => 'Notificaciones',
+                    'url'  => 'admin/configuration',
+                    'icon' => 'fas fa-envelope',
+                ],
+            ],
+        ],        
     ],
 
     /*

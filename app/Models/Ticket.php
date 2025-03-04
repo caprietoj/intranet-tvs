@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TicketCreated;
+use App\Models\Configuration;  // Agregar esta línea
 
 class Ticket extends Model
 {
@@ -29,9 +30,16 @@ class Ticket extends Model
     protected static function booted()
     {
         static::created(function($ticket) {
-            // Send email to sistemas address.
-            Mail::to('sistemas@tvs.edu.co')->send(new TicketCreated($ticket));
-            // Send email to the creator user if email provided.
+            // Obtener correos configurados
+            $config = Configuration::where('key', 'helpdesk_emails')->first();
+            $supportEmails = $config ? explode(',', $config->value) : [];
+            
+            // Enviar a todos los correos configurados
+            foreach ($supportEmails as $email) {
+                Mail::to(trim($email))->send(new TicketCreated($ticket));
+            }
+
+            // Enviar al usuario que creó el ticket
             if ($ticket->user && $ticket->user->email) {
                 Mail::to($ticket->user->email)->send(new TicketCreated($ticket));
             }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MaintenanceRequest;
 use App\Models\User;
+use App\Models\Configuration;  // Agregar esta línea
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
@@ -71,15 +72,27 @@ class MaintenanceRequestController extends Controller
             'status' => 'pending'
         ]);
 
-        // Enviar correo al usuario
-        Mail::to(auth()->user()->email)->send(
-            new MaintenanceRequestCreated($maintenanceRequest)
-        );
+        try {
+            // Obtener correos configurados
+            $config = Configuration::where('key', 'maintenance_emails')->first();
+            $notificationEmails = $config ? explode(',', $config->value) : [];
+            
+            // Enviar correos a todos los destinatarios configurados
+            foreach ($notificationEmails as $email) {
+                Mail::to(trim($email))->send(
+                    new MaintenanceRequestCreated($maintenanceRequest)
+                );
+            }
 
-        // Enviar correo a mantenimiento
-        Mail::to('mantenimiento@tvs.edu.co')->send(
-            new MaintenanceRequestCreated($maintenanceRequest)
-        );
+            // Enviar correo al usuario que creó la solicitud
+            Mail::to(auth()->user()->email)->send(
+                new MaintenanceRequestCreated($maintenanceRequest)
+            );
+
+        } catch (\Exception $e) {
+            \Log::error('Error enviando correos de mantenimiento: ' . $e->getMessage());
+            // No detenemos el proceso si falla el envío de correos
+        }
         
         return redirect()->route('maintenance.index')
             ->with('success', 'La solicitud de mantenimiento ha sido creada exitosamente');

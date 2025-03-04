@@ -3,13 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Mail\EventCreated;
-use App\Mail\EventConfirmation;
+use App\Models\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\EventCreated;
+use App\Mail\EventConfirmed;
 
 class EventController extends Controller
 {
+    protected function sendEventNotifications($event, $mailableClass)
+    {
+        // Obtener correos configurados para el área específica
+        $config = Configuration::where('key', "events_{$event->department}_emails")->first();
+        $notificationEmails = $config ? explode(',', $config->value) : [];
+        
+        // Enviar notificaciones a todos los correos configurados
+        foreach ($notificationEmails as $email) {
+            Mail::to(trim($email))->send(new $mailableClass($event));
+        }
+
+        // Enviar notificación al creador del evento
+        if ($event->user && $event->user->email) {
+            Mail::to($event->user->email)->send(new $mailableClass($event));
+        }
+    }
+
     public function index()
     {
         $events = Event::orderBy('service_date', 'desc')->get();
@@ -32,23 +50,8 @@ class EventController extends Controller
         
         $event = Event::create($eventData);
         
-        $emailMap = [
-            'systems_required' => 'caprietoj@gmail.com',
-            'purchases_required' => 'jefecompras@tvs.edu.co',
-            'maintenance_required' => 'mantenimiento@tvs.edu.co',
-            'general_services_required' => 'serviciosgenerales@tvs.edu.co',
-            'communications_required' => 'comunicaciones@tvs.edu.co',
-            'aldimark_required' => 'aldimark@tvs.edu.co',
-            'metro_junior_required' => 'metrojunior@tvs.edu.co',
-        ];
-
-        foreach ($emailMap as $field => $email) {
-            if ($request->boolean($field)) {
-                Mail::to($email)->send(new EventCreated($event));
-            }
-        }
-
-        Mail::to($request->user()->email)->send(new EventConfirmation($event));
+        // Enviar notificaciones
+        $this->sendEventNotifications($event, EventCreated::class);
 
         return redirect()->route('events.index')
             ->with('swal', [
@@ -139,6 +142,9 @@ class EventController extends Controller
                 return redirect()->route('events.show', $event)
                     ->with('warning', 'Este servicio ya fue confirmado anteriormente.');
             }
+
+            // Enviar notificaciones de confirmación
+            $this->sendEventNotifications($event, EventConfirmed::class);
 
             if ($request->ajax()) {
                 return response()->json(['message' => 'Evento confirmado exitosamente']);

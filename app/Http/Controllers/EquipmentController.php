@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Traits\NotificationHelpers;
 
 class EquipmentController extends Controller
 {
+    use NotificationHelpers;
+
     public function __construct()
     {
         $this->middleware('can:equipment.manage')->only(['resetInventory']);
@@ -78,10 +81,13 @@ class EquipmentController extends Controller
             $equipment->decrement('available_units', $validated['units_requested']);
 
             try {
-                Mail::to('caprietoj@gmail.com')->send(new EquipmentLoanRequested($loan));
+                $this->sendNotificationToAll(
+                    new EquipmentLoanRequested($loan),
+                    'equipment_loan',
+                    auth()->user()
+                );
             } catch (\Exception $e) {
-                // Log el error pero no interrumpir la transacción
-                \Log::error("Error enviando correo: " . $e->getMessage());
+                \Log::error("Error enviando notificación de préstamo: " . $e->getMessage());
             }
 
             DB::commit();
