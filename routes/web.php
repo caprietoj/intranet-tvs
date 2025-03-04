@@ -215,6 +215,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/reset', [EquipmentController::class, 'resetInventory'])->name('equipment.reset')->middleware('can:equipment.manage');
         Route::get('/dashboard', [EquipmentController::class, 'dashboard'])->name('equipment.dashboard');
         Route::get('/loans/data', [EquipmentController::class, 'getLoansData'])->name('equipment.loans.data');
+        Route::get('/types/{section}', [EquipmentController::class, 'getEquipmentTypes']);
     });
 
     Route::get('maintenance/dashboard', [MaintenanceRequestController::class, 'dashboard'])

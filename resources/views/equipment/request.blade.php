@@ -20,6 +20,7 @@
                             <option value="">Seleccione una sección</option>
                             <option value="bachillerato">Bachillerato</option>
                             <option value="preescolar_primaria">Preescolar y Primaria</option>
+                            <option value="administrativo">Administrativo</option>
                         </select>
                     </div>
                 </div>
@@ -27,19 +28,13 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Tipo de Equipo</label>
-                        <select name="equipment_id" class="form-control" required id="equipment-select">
-                            <option value="">Seleccione el tipo de equipo</option>
-                            @foreach($equipment as $item)
-                                <option value="{{ $item->id }}" 
-                                        data-section="{{ $item->section }}"
-                                        data-type="{{ $item->type }}"
-                                        data-available="{{ $item->available_units }}">
-                                    {{ $item->type === 'laptop' ? 'Portátil' : 'iPad' }} 
-                                    ({{ $item->available_units }} disponibles)
-                                </option>
-                            @endforeach
+                        <select name="equipment_id" class="form-control" required id="equipment-select" disabled>
+                            <option value="">Primero seleccione una sección</option>
                         </select>
-                        <small class="text-muted">Equipos disponibles: <span id="available-units">0</span></small>
+                        <small class="text-muted d-block mt-1">
+                            <i class="fas fa-info-circle"></i> 
+                            Equipos disponibles: <span id="available-units" class="font-weight-bold">0</span>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -47,7 +42,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Grado/Curso</label>
+                        <label>Salón</label>
                         <input type="text" name="grade" class="form-control" required>
                     </div>
                 </div>
@@ -112,21 +107,80 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        equipmentSelect.disabled = false;
-        const options = equipmentSelect.options;
-        
-        for(let i = 1; i < options.length; i++) {
-            const option = options[i];
-            const equipmentSection = option.dataset.section;
-            
-            if(selectedSection === 'preescolar_primaria' && option.dataset.type === 'laptop') {
-                option.style.display = 'none';
-            } else if(equipmentSection === selectedSection) {
-                option.style.display = '';
-            } else {
-                option.style.display = 'none';
-            }
-        }
+        fetch(`/equipment/types/${selectedSection}`)
+            .then(response => response.json())
+            .then(data => {
+                equipmentSelect.innerHTML = '<option value="">Seleccione un equipo</option>';
+                
+                // Si es administrativo, mostrar todos los equipos agrupados por sección
+                if (selectedSection === 'administrativo') {
+                    // Crear grupos de opciones por sección
+                    const preescolarPrimaria = document.createElement('optgroup');
+                    preescolarPrimaria.label = 'Preescolar y Primaria';
+                    
+                    const bachillerato = document.createElement('optgroup');
+                    bachillerato.label = 'Bachillerato';
+                    
+                    let hasAvailableEquipment = false;
+                    
+                    data.forEach(equipment => {
+                        if (equipment.available_units > 0) {
+                            hasAvailableEquipment = true;
+                            const option = new Option(
+                                `${equipment.type} (${equipment.available_units} disponibles)`,
+                                equipment.id
+                            );
+                            
+                            if (equipment.section === 'preescolar_primaria') {
+                                preescolarPrimaria.appendChild(option);
+                            } else if (equipment.section === 'bachillerato') {
+                                bachillerato.appendChild(option);
+                            }
+                        }
+                    });
+                    
+                    if (!hasAvailableEquipment) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sin Disponibilidad',
+                            text: 'Actualmente no hay equipos disponibles para préstamo.',
+                            confirmButtonText: 'Entendido'
+                        });
+                        equipmentSelect.disabled = true;
+                        return;
+                    }
+                    
+                    equipmentSelect.appendChild(preescolarPrimaria);
+                    equipmentSelect.appendChild(bachillerato);
+                } else {
+                    // Para otras secciones, mantener el comportamiento actual
+                    const filteredEquipment = data.filter(equipment => 
+                        equipment.section === selectedSection && equipment.available_units > 0
+                    );
+                    
+                    if (filteredEquipment.length === 0) {
+                        const equipType = selectedSection === 'preescolar_primaria' ? 'iPads' : 'portátiles';
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sin Disponibilidad',
+                            text: `Actualmente no hay ${equipType} disponibles para préstamo en esta sección.`,
+                            confirmButtonText: 'Entendido'
+                        });
+                        equipmentSelect.disabled = true;
+                        return;
+                    }
+                    
+                    filteredEquipment.forEach(equipment => {
+                        const option = new Option(
+                            `${equipment.type} (${equipment.available_units} disponibles)`,
+                            equipment.id
+                        );
+                        equipmentSelect.add(option);
+                    });
+                }
+                
+                equipmentSelect.disabled = false;
+            });
         
         equipmentSelect.value = '';
         updateAvailableUnits();
@@ -149,13 +203,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateAvailableUnits() {
         const selectedOption = equipmentSelect.selectedOptions[0];
-        const availableUnits = selectedOption ? selectedOption.dataset.available : 0;
-        availableUnitsSpan.textContent = availableUnits;
-        unitsInput.max = availableUnits;
-        
-        if(selectedOption) {
+        if (selectedOption && selectedOption.value) {
+            const text = selectedOption.textContent;
+            const matches = text.match(/\((\d+) disponibles\)/);
+            const availableUnits = matches ? matches[1] : 0;
+            
+            availableUnitsSpan.innerHTML = `<strong>${availableUnits}</strong> equipos disponibles`;
             unitsInput.max = availableUnits;
             unitsInput.value = Math.min(unitsInput.value, availableUnits);
+            
+            if (availableUnits == 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin disponibilidad',
+                    text: 'No hay equipos disponibles para este tipo'
+                });
+                unitsInput.disabled = true;
+            } else {
+                unitsInput.disabled = false;
+            }
+        } else {
+            availableUnitsSpan.textContent = '0';
+            unitsInput.value = '';
+            unitsInput.disabled = true;
         }
     }
 
@@ -174,6 +244,31 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             this.value = '';
         }
+    });
+    
+    // Validación de fechas
+    document.getElementById('loan_date').addEventListener('change', function() {
+        document.getElementById('return_date').min = this.value;
+    });
+
+    // SweetAlert para confirmación
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: '¿Confirmar solicitud?',
+            text: "¿Desea proceder con la solicitud de préstamo?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        });
     });
 });
 </script>

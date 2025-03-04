@@ -235,4 +235,17 @@ class EquipmentController extends Controller
             ], 500);
         }
     }
+
+    public function getEquipmentTypes($section)
+    {
+        if ($section === 'administrativo') {
+            // Para administrativos, devolver todos los equipos disponibles
+            return Equipment::where('available_units', '>', 0)->get();
+        }
+        
+        // Para otras secciones, devolver solo los equipos de su sección
+        return Equipment::where('section', $section)
+            ->where('available_units', '>', 0)
+            ->get();
+    }
 }

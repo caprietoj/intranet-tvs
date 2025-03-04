@@ -16,7 +16,7 @@
                         <th>ID</th>
                         <th>Docente</th>
                         <th>Sección</th>
-                        <th>Grado/Curso</th>
+                        <th>Salón</th> <!-- Changed from "Grado/Curso" to "Salón" -->
                         <th>Equipo</th>
                         <th>Cantidad</th>
                         <th>Fecha</th>
