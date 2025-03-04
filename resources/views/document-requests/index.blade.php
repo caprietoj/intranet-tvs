@@ -55,7 +55,7 @@
         @endif
                             </td>
                             <td>
-                                <a href="{{ route('document-requests.edit', $request) }}" class="btn btn-sm btn-info">Editar</a>
+                              @can('editar-solicitud')<a href="{{ route('document-requests.edit', $request) }}" class="btn btn-sm btn-info">Editar</a>@endcan
                             </td>
                         </tr>
                     @endforeach

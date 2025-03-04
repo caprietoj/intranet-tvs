@@ -547,7 +547,7 @@ return [
         [
             'text'    => 'Almacén',
             'icon'    => 'fas fa-warehouse',
-            'can'     => 'view.warehouse',
+            'can'     => 'ver almacen',
             'submenu' => [
                 [
                     'text' => 'Proveedores',

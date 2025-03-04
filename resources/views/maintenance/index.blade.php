@@ -47,6 +47,7 @@
                                 </span>
                             </td>
                             <td>{{ $request->user->name }}</td>
+                            @can('acciones-mantenimiento')
                             <td>
                                 <div class="btn-group">
                                     <a href="{{ route('maintenance.show', $request) }}" class="btn btn-info btn-sm" title="Ver detalles">
@@ -64,6 +65,7 @@
                                     </form>
                                 </div>
                             </td>
+                            @endcan
                         </tr>
                         @endforeach
                     </tbody>

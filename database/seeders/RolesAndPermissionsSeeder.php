@@ -63,7 +63,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'view.maintenance',
             'view-admin-dashboard',
             'manage.configuration',
-            'view.warehouse',
+            'ver almacen',
+            'editar-solicitud',
+            'acciones-mantenimiento',
         ];
        
   
@@ -99,6 +101,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'document-requests']),
             Permission::firstOrCreate(['name' => 'view.maintenance']),
             Permission::firstOrCreate(['name' => 'equipment.reserva']),
+            Permission::firstOrCreate(['name' => 'view.reservas']),
         ]);
 
          // Crear el rol "enfermeria"
@@ -142,7 +145,7 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'umbral.compras.show']),
              Permission::firstOrCreate(['name' => 'view.kpis']),
              Permission::firstOrCreate(['name' => 'view.maintenance']),
-             Permision::firstOrCreate(['name' => 'view.warehouse']),
+             Permission::firstOrCreate(['name' => 'ver almacen']),
          ]);
 
           // Crear el rol "rrhh"
@@ -159,6 +162,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => 'documents']),
             Permission::firstOrCreate(['name' => 'document-requests']),
             Permission::firstOrCreate(['name' => 'view.maintenance']),
+            Permission::firstOrCreate(['name' => 'editar-solicitud']),
 
         ]);
 
@@ -179,6 +183,7 @@ class RolesAndPermissionsSeeder extends Seeder
              Permission::firstOrCreate(['name' => 'ticket.view']),
              Permission::firstOrCreate(['name' => 'document-requests']),
              Permission::firstOrCreate(['name' => 'view.maintenance']),
+             Permission::firstOrCreate(['name' => 'acciones-mantenimiento']),
          ]);
 
          $usuarioRole = Role::firstOrCreate(['name' => 'asistentes']);
