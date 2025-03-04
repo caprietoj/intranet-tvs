@@ -50,7 +50,7 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+            <button type="submit" class="btn btn-info">Actualizar Usuario</button>
         </form>
     </div>
 </div>

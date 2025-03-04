@@ -27,7 +27,7 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <button type="submit" class="btn btn-info">Actualizar</button>
                 <a href="{{ route('roles.index') }}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>

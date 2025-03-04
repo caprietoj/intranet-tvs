@@ -10,7 +10,7 @@
     <div class="card">
         <div class="card-header">
             <!-- Changed route for creating a new role -->
-            <a href="{{ route('roles.create') }}" class="btn btn-success">Nuevo Rol</a>
+            <a href="{{ route('roles.create') }}" class="btn btn-info">Nuevo Rol</a>
         </div>
         <div class="card-body">
             <table id="roles-table" class="table table-bordered">

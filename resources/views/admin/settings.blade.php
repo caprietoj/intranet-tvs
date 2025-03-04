@@ -27,7 +27,7 @@
                 <label for="password_confirmation">Confirmar Contraseña</label>
                 <input id="password_confirmation" type="password" name="password_confirmation" class="form-control" placeholder="Confirmar nueva contraseña">
             </div>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="submit" class="btn btn-info">Guardar Cambios</button>
         </form>
     </div>
 @stop

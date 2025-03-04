@@ -48,7 +48,7 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Registrar Usuario</button>
+            <button type="submit" class="btn btn-info">Registrar Usuario</button>
         </form>
     </div>
 </div>

@@ -9,7 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <a href="{{ route('users.create') }}" class="btn btn-success">Nuevo Usuario</a>
+            <a href="{{ route('users.create') }}" class="btn btn-info">Nuevo Usuario</a>
         </div>
         <div class="card-body">
             <table id="users-table" class="table table-bordered">
