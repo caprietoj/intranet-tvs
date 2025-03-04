@@ -13,62 +13,79 @@
             @csrf
             @foreach($configurations as $key => $config)
                 @if($key === 'events')
-                    <div class="card shadow mb-4">
-                        <div class="card-header bg-primary">
-                            <h3 class="card-title text-white mb-0">
-                                <i class="fas fa-calendar-alt mr-2"></i>
-                                Notificaciones de {{ $config['name'] }}
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="accordion" id="eventsAccordion">
-                                @foreach($config['areas'] as $areaKey => $area)
-                                    <div class="card mb-2">
-                                        <div class="card-header bg-light" id="heading{{ $areaKey }}" role="button" data-toggle="collapse" data-target="#collapse{{ $areaKey }}" aria-expanded="false">
-                                            <h5 class="mb-0 d-flex justify-content-between align-items-center">
-                                                <span class="text-primary">
-                                                    <i class="fas fa-building mr-1"></i>
-                                                    {{ $area['name'] }}
-                                                </span>
-                                                <i class="fas fa-chevron-down"></i>
-                                            </h5>
-                                        </div>
-                                        <div id="collapse{{ $areaKey }}" class="collapse" aria-labelledby="heading{{ $areaKey }}" data-parent="#eventsAccordion">
-                                            <div class="card-body">
-                                                <div id="emailInputs_events_{{ $areaKey }}">
-                                                    @forelse($area['emails'] as $email)
-                                                        <div class="input-group mb-2">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                                            </div>
-                                                            <input type="email" name="emails[events_{{ $areaKey }}][]" class="form-control" value="{{ $email }}" required placeholder="correo@ejemplo.com">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn-outline-danger remove-email">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </div>
+                    @php
+                        $areaIcons = [
+                            'sistemas' => 'fas fa-laptop-code',
+                            'compras' => 'fas fa-shopping-cart',
+                            'mantenimiento' => 'fas fa-tools',
+                            'servicios_generales' => 'fas fa-cogs',
+                            'comunicaciones' => 'fas fa-comments',
+                            'aldimark' => 'fas fa-store',
+                            'metro_junior' => 'fas fa-school'
+                        ];
+                    @endphp
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <div class="card shadow">
+                                <div class="card-header bg-primary">
+                                    <h3 class="card-title text-white mb-0">
+                                        <i class="fas fa-calendar-alt mr-2"></i>
+                                        Notificaciones de {{ $config['name'] }}
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($config['areas'] as $areaKey => $area)
+                                            <div class="col-md-4 mb-4">
+                                                <div class="card h-100">
+                                                    <div class="card-header bg-primary">
+                                                        <h5 class="mb-0 text-white">
+                                                            <i class="{{ $areaIcons[$areaKey] ?? 'fas fa-building' }} mr-1"></i>
+                                                            {{ $area['name'] }}
+                                                        </h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div id="emailInputs_events_{{ $areaKey }}">
+                                                            @forelse($area['emails'] as $email)
+                                                                <div class="input-group mb-2">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                                                    </div>
+                                                                    <input type="email" name="emails[events_{{ $areaKey }}][]" 
+                                                                           class="form-control" value="{{ $email }}" required 
+                                                                           placeholder="correo@ejemplo.com">
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-outline-danger remove-email">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            @empty
+                                                                <div class="input-group mb-2">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                                                    </div>
+                                                                    <input type="email" name="emails[events_{{ $areaKey }}][]" 
+                                                                           class="form-control" required 
+                                                                           placeholder="correo@ejemplo.com">
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-outline-danger remove-email">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            @endforelse
                                                         </div>
-                                                    @empty
-                                                        <div class="input-group mb-2">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                                            </div>
-                                                            <input type="email" name="emails[events_{{ $areaKey }}][]" class="form-control" required placeholder="correo@ejemplo.com">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn-outline-danger remove-email">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    @endforelse
+                                                        <button type="button" class="btn btn-outline-secondary w-100 mt-2 add-email" 
+                                                                data-container="events_{{ $areaKey }}">
+                                                            <i class="fas fa-plus mr-1"></i> Agregar Correo
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <button type="button" class="btn btn-outline-secondary mt-2 add-email" data-container="events_{{ $areaKey }}">
-                                                    <i class="fas fa-plus mr-1"></i> Agregar Correo
-                                                </button>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     </div>
-                                @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -310,6 +327,42 @@
     .card-header.bg-primary h3,
     .accordion .card-header span {
         color: #ffffff !important;
+    }
+
+    /* Estilos específicos para las tarjetas de eventos */
+    .card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: 100%;
+    }
+
+    .card-header {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .input-group {
+        margin-bottom: 0.75rem;
+    }
+
+    .input-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .btn-outline-secondary {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
     }
 </style>
 @stop
