@@ -12,7 +12,7 @@
             <p class="welcome-subtitle">Bienvenido(a), {{ Auth::user()->name }}</p>
         </div>
     </div>
-
+    @can('view-admin-dashboard')
     <!-- Statistics Cards -->
     <div class="row mt-4">
         <div class="col-lg-3 col-6">
@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-
+        @endcan
         <div class="col-lg-3 col-6">
             <div class="info-box">
                 <span class="info-box-icon"><i class="fas fa-clock"></i></span>
@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-
+   
     <!-- Announcements Section -->
     <div class="row mt-4">
         <div class="col-12">
